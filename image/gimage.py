@@ -3,7 +3,7 @@ from redbot.core import commands
 from redbot.core.data_manager import cog_data_path
 from google_images_download import google_images_download
 import os, shutil
-class Image(commands.Cog):
+class GImage(commands.Cog):
 	"""Cog that grabs images from Google."""
 	def __init__(self, bot):
 		self.bot = bot
