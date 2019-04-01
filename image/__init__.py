@@ -1,3 +1,3 @@
-from .image import Image
+from .gimage import GImage
 def setup(bot):
-    bot.add_cog(Image(bot))
+    bot.add_cog(GImage(bot))
