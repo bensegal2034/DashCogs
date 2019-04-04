@@ -1,7 +1,7 @@
 {
     "author" : "Dot_Dash",
     "install_msg" : "Thanks for installing GImage! Use >help GImage to get started.",
-    "name" : "DashCogs",
+    "name" : "GImage",
     "short" : "Get images from Google",
     "description" : "Get images from Google. Can be multiple or singular images.",
     "requirements": ["google_images_download"]
