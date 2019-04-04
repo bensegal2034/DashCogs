@@ -60,7 +60,7 @@ class GImage(commands.Cog):
 	@commands.guild_only()
 	@commands.group(aliases=["imgset"])
 	async def gimageset(self, ctx):
-		"""All settings relating to SelfMessage. Settings are saved globally."""
+		"""All settings relating to GImage. Settings are saved per guild."""
 		pass
 
 	@checks.guildowner()
