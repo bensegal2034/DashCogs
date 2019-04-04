@@ -1,0 +1,7 @@
+{
+    "author" : "Dot_Dash",
+    "install_msg" : "Thanks for installing SelfMessage! Use >help SelfMessage to get started.",
+    "name" : "SelfMessage",
+    "short" : "Send messages from the bot's account",
+    "description" : "Send messages in a customizable server and channel as the bot owner.",
+}
