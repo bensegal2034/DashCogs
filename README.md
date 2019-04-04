@@ -25,8 +25,8 @@ And load each cog with
 
 This cog allows you to search for either one or multiple images on [Google Images](https://images.google.com).
 
-1. `[p]img <search term>`: Download a single image. Only accepts one parameter, which is the image you would like to search for.
-1. `[p]mimg <search term> <amount>`: Download multiple images. Accepts two parameters - the search and the amount of images to get. Please note that large amounts may crash the bot. In addition, search terms with a space must be put in quotes.
-1. `[p]gimageset <setting>`: Manipulate various settings described below.
-  1. `[p]gimageset block`: Block a person from using GImage. If the person is already on the block list, they will be removed.
-  1. `[p]gimageset blocklist`: View the list of people blocked from using GImage.
+* `[p]img <search term>`: Download a single image. Only accepts one parameter, which is the image you would like to search for.
+* `[p]mimg <search term> <amount>`: Download multiple images. Accepts two parameters - the search and the amount of images to get. Please note that large amounts may crash the bot. In addition, search terms with a space must be put in quotes.
+* `[p]gimageset <setting>`: Manipulate various settings described below.
+  * `[p]gimageset block`: Block a person from using GImage. If the person is already on the block list, they will be removed.
+  * `[p]gimageset blocklist`: View the list of people blocked from using GImage.
