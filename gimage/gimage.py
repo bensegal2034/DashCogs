@@ -66,7 +66,7 @@ class GImage(commands.Cog):
 	@checks.guildowner()
 	@commands.guild_only()
 	@gimageset.command()
-	async def block(self, ctx, *, mem : discord.Member = None):
+	async def toggleblock(self, ctx, *, mem : discord.Member = None):
 		"""Add or remove a person to the blocked list of people not allowed to use GImage."""
 		async with self.config.guild(ctx.guild).blocked_members() as blocked_members:
 			if mem is None:
