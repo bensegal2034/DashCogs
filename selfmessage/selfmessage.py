@@ -2,6 +2,8 @@ import discord
 from redbot.core import commands
 from redbot.core import checks
 from redbot.core import Config
+from redbot.core.data_manager import cog_data_path
+import os
 
 class SelfMessage(commands.Cog):
 	"""Allows the bot owner to send messages from the bot's account."""
@@ -87,7 +89,7 @@ class SelfMessage(commands.Cog):
 			else:
 				access.append(mem.id)
 				await ctx.send(f"{mem.display_name} is now allowed to use SelfMessage.")
-	
+
 	@checks.is_owner()
 	@selfmessageset.command()
 	async def listusers(self, ctx):
@@ -113,7 +115,7 @@ class SelfMessage(commands.Cog):
 				enabled == True
 				and message.author.id in access or message.author.id == self.bot.owner_id
 			):
-				if message.attatchments = []:
+				if message.attachments == []:
 					channel = self.bot.get_channel(await self.config.chn())
 					await channel.send(message.content)
 				else:
@@ -121,6 +123,7 @@ class SelfMessage(commands.Cog):
 					files = message.attachments
 					for x in range(len(files)):
 						try:
-							await channel.send(file=discord.File(files[x]))
+							await files[x].save(str(cog_data_path(self)) + "\\attachment.png")
+							await channel.send(file=discord.File(str(cog_data_path(self)) + "\\attachment.png"))
 						except:
-							await channel.send("**Error uploading file!**")
+							raise
