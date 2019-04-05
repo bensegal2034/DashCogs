@@ -77,7 +77,7 @@ class GImage(commands.Cog):
 				await ctx.send(f"{mem.display_name} removed from block list.")
 			else:
 				blocked_members.append(mem.id)
-				await ctx.send(f"{mem.display_name}added to block list.")
+				await ctx.send(f"{mem.display_name} added to block list.")
 
 	@checks.guildowner()
 	@commands.guild_only()
