@@ -36,8 +36,8 @@ class SelfMessage(commands.Cog):
 		if srv.isdigit() == False:
 			if srv in names:
 				await self.config.server.set(ids[names.index(srv)])
-				name = self.bot.get_guild(srvi).name
-				await ctx.send(f"Server set to {name}")
+				name = self.bot.get_guild(ids[names.index(srv)]).name
+				await ctx.send(f"Server set to {name}.")
 			else:
 				await ctx.send("Can't find server!")
 		else:
@@ -45,7 +45,7 @@ class SelfMessage(commands.Cog):
 			if srvi in ids:
 				await self.config.server.set(ids[ids.index(srvi)])
 				name = self.bot.get_guild(srvi).name
-				await ctx.send(f"Server set to {name}")
+				await ctx.send(f"Server set to {name}.")
 			else:
 				await ctx.send("Can't find server!")
 
@@ -62,7 +62,7 @@ class SelfMessage(commands.Cog):
 			await ctx.send("Please specify a channel!")
 			return
 		await self.config.chn.set(ch.id)
-		await ctx.send(f"Channel set to {ch.name}")
+		await ctx.send(f"Channel set to #{ch.name}.")
 
 	@checks.is_owner()
 	@selfmessageset.command()
