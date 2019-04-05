@@ -93,8 +93,9 @@ class SelfMessage(commands.Cog):
 	@checks.is_owner()
 	@selfmessageset.command()
 	async def listusers(self, ctx):
+		"""Show all users allowed to use SelfMessage."""
 		access = await self.config.access()
-		list = "```\n"
+		list = "```\n" + ctx.guild.get_member(self.bot.owner_id).display_name + " (Owner)\n"
 		for x in range(len(access)):
 			try:
 				member = ctx.guild.get_member(access[x])
