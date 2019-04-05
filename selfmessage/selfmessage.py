@@ -63,7 +63,7 @@ class SelfMessage(commands.Cog):
 	@checks.is_owner()
 	@selfmessageset.command()
 	async def enabled(self, ctx):
-		"""Toggle if sending PMs to the bot as owner will send a message to the server & text channel specified."""
+		"""Toggle if sending PMs to the bot as owner (or any other authorized user) will send a message to the server & text channel specified."""
 		if await self.config.enabled() == True:
 			await self.config.enabled.set(False)
 			await ctx.send("Toggled off.")
