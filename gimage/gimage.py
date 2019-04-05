@@ -28,8 +28,8 @@ class GImage(commands.Cog):
 			try:
 				if os.path.isdir(file_path):
 					shutil.rmtree(file_path)
-			except Exception as e:
-				await ctx.send(e)
+			except:
+				raise
 
 	@commands.command(aliases=["mimg"])
 	async def multiimg(self, ctx, req : str, amt : int = 2):
@@ -74,10 +74,10 @@ class GImage(commands.Cog):
 				return
 			if mem.id in blocked_members:
 				blocked_members.remove(mem.id)
-				await ctx.send("Person removed from block list.")
+				await ctx.send(f"{mem.display_name} removed from block list.")
 			else:
 				blocked_members.append(mem.id)
-				await ctx.send("Person added to block list.")
+				await ctx.send(f"{mem.display_name} added to block list.")
 
 	@checks.guildowner()
 	@commands.guild_only()
