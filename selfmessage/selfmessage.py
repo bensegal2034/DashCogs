@@ -34,14 +34,16 @@ class SelfMessage(commands.Cog):
 		if srv.isdigit() == False:
 			if srv in names:
 				await self.config.server.set(ids[names.index(srv)])
-				await ctx.send("Server set.")
+				name = self.bot.get_guild(srvi).name
+				await ctx.send(f"Server set to {name}")
 			else:
 				await ctx.send("Can't find server!")
 		else:
 			srvi = int(srv)
 			if srvi in ids:
 				await self.config.server.set(ids[ids.index(srvi)])
-				await ctx.send("Server set.")
+				name = self.bot.get_guild(srvi).name
+				await ctx.send(f"Server set to {name}")
 			else:
 				await ctx.send("Can't find server!")
 
@@ -58,7 +60,7 @@ class SelfMessage(commands.Cog):
 			await ctx.send("Please specify a channel!")
 			return
 		await self.config.chn.set(ch.id)
-		await ctx.send("Channel updated.")
+		await ctx.send(f"Channel set to {ch.name}")
 
 	@checks.is_owner()
 	@selfmessageset.command()
@@ -81,10 +83,10 @@ class SelfMessage(commands.Cog):
 				return
 			if mem.id in access:
 				access.remove(mem.id)
-				await ctx.send(mem.display_name + " is now disallowed from using SelfMessage.")
+				await ctx.send(f"{mem.display_name} is now disallowed from using SelfMessage.")
 			else:
 				access.append(mem.id)
-				await ctx.send(mem.display_name + " is now allowed to use SelfMessage.")
+				await ctx.send(f"{mem.display_name} is now allowed to use SelfMessage.")
 	
 	@checks.is_owner()
 	@selfmessageset.command()
