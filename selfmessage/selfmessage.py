@@ -111,5 +111,14 @@ class SelfMessage(commands.Cog):
 				enabled == True
 				and message.author.id in access or message.author.id == self.bot.owner_id
 			):
-				channel = self.bot.get_channel(await self.config.chn())
-				await channel.send(message.content)
+				if message.attatchments = []:
+					channel = self.bot.get_channel(await self.config.chn())
+					await channel.send(message.content)
+				else:
+					channel = self.bot.get_channel(await self.config.chn())
+					files = message.attachments
+					for x in range(len(files)):
+						try:
+							await channel.send(file=discord.File(files[x]))
+						except:
+							await channel.send("**Error uploading file!**")
