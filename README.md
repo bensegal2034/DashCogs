@@ -11,8 +11,6 @@ Add this repo using
 
 `[p]repo add DashCogs https://github.com/DashGit/DashCogs`
 
->[p] is your prefix.
-
 Then, install each cog individually with
 
 `[p]cog install DashCogs <cog name>`
@@ -34,7 +32,8 @@ This cog allows you to search for either one or multiple images on [Google Image
 
 This cog allows you to type messages using your bot's account. In order to send a message, PM the bot with what you would like to say. Make sure you've set the server and channel the bot should say the messages in first (using the commands listed below)!
 **Note: Only the owner of the bot is allowed to do this.**
-
-* `[p]server <server>`: Sets the server the bot should look for channels in. The bot must be in the server specified.
-* `[p]channel <channel>`: Sets the channel the bot should send messages in. The channel must be one the bot can see.
-* `[p]enabled`: Toggles on and off whether the bot owner sending a PM to their bot will send a message.
+* `[p]selfmessageset <setting>`: Manipulate various settings described below.
+  * `[p]selfmessageset server <server>`: Sets the server the bot should look for channels in. The bot must be in the server specified.
+  * `[p]selfmessageset channel <channel>`: Sets the channel the bot should send messages in. The channel must be one the bot can see.
+  * `[p]selfmessageset enabled`: Toggles on and off whether the bot owner sending a PM to their bot will send a message.
+  * `[p]selfmessageset toggleuser`: Toggles on and off whether someone can use the cog besides the bot owner.
