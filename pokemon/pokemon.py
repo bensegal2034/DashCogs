@@ -198,16 +198,16 @@ class Pokemon(commands.Cog):
 					guess = ""
 					random_levels = await self.config.guild(message.guild).random_levels()
 					whitelisted_channels = await self.config.guild(message.guild).whitelisted_channels()
-					if message.channel.id not in whitelisted_channels:
-						if len(whitelisted_channels) - 1 <= 0:
-							if len(whitelisted_channels) == 0:
-								return
-							else:
-								spawn = self.bot.get_channel(whitelisted_channels[0])
-						else:
+					if message.channel.id in whitelisted_channels:
+						if len(whitelisted_channels) > 1:
 							spawn = self.bot.get_channel(whitelisted_channels[randint(0, len(whitelisted_channels) - 1)])
+						else:
+							spawn = self.bot.get_channel(whitelisted_channels[0])
 					else:
-						return
+						if len(whitelisted_channels) == 0:
+							return
+						else:
+							spawn = self.bot.get_channel(whitelisted_channels[0])
 					if random_levels == 1:
 						level = randint(1, 100)
 					else:
