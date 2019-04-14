@@ -24,6 +24,13 @@ class Pokemon(commands.Cog):
 			levelamt = 1
 		)
 
+	async def fixready(self):
+		for guild in self.bot.guilds:
+			await self.config.guild(guild).ready.set(False)
+
+	def __unload(self):
+		self.bot.loop.create_task(self.fixready())
+
 	async def levelup(self, author):
 		held_pokemon = await self.config.member(author).held_pokemon()
 		levelamt = await self.config.member(author).levelamt()
@@ -59,7 +66,7 @@ class Pokemon(commands.Cog):
 			return
 
 	@commands.command(aliases=["pinfo"])
-	async def pokemoninfo(self, ctx):
+	async def pokemoninfo(self, ctx, sel : int = 0):
 		"""Shows all the pokemon you have caught."""
 		caught_pokemon = await self.config.member(ctx.author).caught_pokemon()
 		show_pokemon_amt = await self.config.guild(ctx.guild).show_pokemon_amt()
@@ -67,6 +74,11 @@ class Pokemon(commands.Cog):
 		embeds = []
 		run = True
 		v = 0
+		if sel != 0:
+			if sel > len(caught_pokemon) or sel < 0:
+				await ctx.send("Invalid value!")
+				return
+		pass # add viewing info here later
 		# if no pokemon
 		if len(caught_pokemon) == 0:
 			desc = "(No pokemon caught yet!)"
@@ -150,10 +162,21 @@ class Pokemon(commands.Cog):
 		levelamt = await self.config.member(ctx.author).levelamt()
 		held_pokemon = await self.config.member(ctx.author).held_pokemon()
 		channelslist = ""
+		goal = caught_pokemon[held_pokemon - 1]["level"] * 5
 		for x in range (len(whitelisted_channels)):
 			c = self.bot.get_channel(whitelisted_channels[x])
 			channelslist += c.name + " "
-		await ctx.send(f"**Debug:**\nWhitelisted channels: {channelslist}\nRandom level value: {str(random_levels)}\nAmount of pokemon shown: {str(show_pokemon_amt)}\nCaught pokemon: {str(caught_pokemon)}\nHeld pokemon: {str(held_pokemon)}\nLevel amt: {str(levelamt)}")
+		await ctx.send(f"**Debug:**\nWhitelisted channels: {channelslist}\nRandom level value: {str(random_levels)}\nAmount of pokemon shown: {str(show_pokemon_amt)}\nHeld pokemon: {str(held_pokemon)}\nLevel amt: {str(levelamt)}\nLevel goal: {goal}")
+		await ctx.send("Caught pokemon:")
+		def chunker(seq, size):
+			return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+		for x in chunker(str(caught_pokemon), 1992):
+			msg = (
+				"```\n"
+				f"{x}"
+				"```"
+			)
+			await ctx.send(msg)
 
 	@checks.guildowner()
 	@commands.guild_only()
@@ -187,6 +210,7 @@ class Pokemon(commands.Cog):
 		# spawning pokemon
 		async with self.config.member(message.author).caught_pokemon() as caught_pokemon:
 			t = await self.config.guild(message.guild).t()
+			#randint(180, 300)
 			if time.time() - t >= 10:
 				ready = await self.config.guild(message.guild).ready()
 				if ready == False:
@@ -213,13 +237,25 @@ class Pokemon(commands.Cog):
 					else:
 						level = 1
 					if not message.author.bot and isinstance(message.channel, discord.TextChannel):
-						await self.config.guild(ctx.guild).ready.set(True)
-						await spawn.send("A wild pokemon has appeared!")
+						await self.config.guild(message.guild).ready.set(True)
 						try:
-							await spawn.send(file=discord.File(str(bundled_data_path(self)) + "\\images\\" + str(id).zfill(3) + str(pokemon[id - 1]["name"]["english"]) + ".png", filename='pokemon.png'))
+							embed = discord.Embed(
+								title = "A wild pokemon has appeared!",
+								color = discord.Color(0).from_rgb(255,0,0)
+							)
+							img = discord.File(str(bundled_data_path(self) / "images" / (str(id).zfill(3) + str(pokemon[id - 1]["name"]["english"]) + ".png")), filename="pokemon.png")
+							embed.set_image(url="attachment://pokemon.png")
+							embed.set_footer(text="To catch the pokemon, type its name in chat!")
+							await spawn.send(embed=embed, files=[img])
 						except:
-							await spawn.send("No image avaliable!")
-						await spawn.send(f"Pokemon is {name}")
+							embed = discord.Embed(
+								title = "A wild pokemon has appeared!",
+								description = ("No image avaliable!"),
+								color = discord.Color(0).from_rgb(255,0,0)
+							)
+							embed.set_footer(text="To catch the pokemon, type its name in chat!")
+							await spawn.send(embed=embed)
+						await spawn.send(f"Pokemon is {name}.")
 						try:
 							guess = await self.bot.wait_for('message', check=check, timeout=20)
 						except asyncio.TimeoutError:
