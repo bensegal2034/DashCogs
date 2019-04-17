@@ -109,22 +109,20 @@ class SelfMessage(commands.Cog):
 		enabled = await self.config.enabled()
 		access = await self.config.access()
 		if (
-			not message.author.bot
-			and not isinstance(message.channel, discord.TextChannel)
+		    not message.author.bot
+		    and not isinstance(message.channel, discord.TextChannel)
+		    and enabled
+		    and (message.author.id in access or message.author.id == self.bot.owner_id)
 		):
-			if (
-				enabled == True
-				and message.author.id in access or message.author.id == self.bot.owner_id
-			):
-				if message.attachments == []:
-					channel = self.bot.get_channel(await self.config.chn())
-					await channel.send(message.content)
-				else:
-					channel = self.bot.get_channel(await self.config.chn())
-					files = message.attachments
-					for x in range(len(files)):
-						try:
-							await files[x].save(str(cog_data_path(self)) + "\\attachment.png")
-							await channel.send(file=discord.File(str(cog_data_path(self)) + "\\attachment.png"))
-						except:
-							raise
+			if message.attachments == []:
+				channel = self.bot.get_channel(await self.config.chn())
+				await channel.send(message.content)
+			else:
+				channel = self.bot.get_channel(await self.config.chn())
+				files = message.attachments
+				for x in range(len(files)):
+					try:
+						await files[x].save(str(cog_data_path(self)) + "\\attachment.png")
+						await channel.send(file=discord.File(str(cog_data_path(self)) + "\\attachment.png"))
+					except:
+						raise

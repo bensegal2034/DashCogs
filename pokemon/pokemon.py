@@ -60,17 +60,22 @@ class Pokemon(commands.Cog):
 		await ctx.send(f"{'Type is' if len(pokemon[id - 1]['type']) == 1 else 'Types are'}: " + str(", ".join(pokemon[id - 1]["type"])))
 		await ctx.send(f"HP: {str(pokemon[id - 1]['base']['HP'])}\nAttack: {str(pokemon[id - 1]['base']['Attack'])}\nDefense: {str(pokemon[id - 1]['base']['Defense'])}\nSpecial Attack: {str(pokemon[id - 1]['base']['Sp. Attack'])}\nSpecial Defense: {str(pokemon[id - 1]['base']['Sp. Defense'])}\nSpeed: {str(pokemon[id - 1]['base']['Speed'])}")
 		try:
-			await ctx.send(file=discord.File(str(bundled_data_path(self)) + "\\images\\" + str(id).zfill(3) + str(pokemon[id - 1]["name"]["english"]) + ".png", filename='pokemon.png'))
+			await ctx.send(file=discord.File(str(bundled_data_path(self)) + "\\images\\" + str(id).zfill(3) + str(pokemon[id - 1]["name"]["english"]) + ".png", filename="pokemon.png"))
 		except:
 			await ctx.send("No image avaliable!")
 			return
 
 	@commands.command(aliases=["pinfo"])
 	async def pokemoninfo(self, ctx, sel : int = 0):
-		"""Shows all the pokemon you have caught."""
+		"""
+		Shows all the pokemon you have caught.
+
+		You are also able to view detailed info about one particular pokemon by typing its ID after this command.
+		"""
 		caught_pokemon = await self.config.member(ctx.author).caught_pokemon()
 		show_pokemon_amt = await self.config.guild(ctx.guild).show_pokemon_amt()
-		order = sorted(caught_pokemon, key = lambda p: p['id'])
+		levelamt = await self.config.member(ctx.author).levelamt()
+		order = sorted(caught_pokemon, key = lambda p: p["id"])
 		embeds = []
 		run = True
 		v = 0
@@ -78,7 +83,18 @@ class Pokemon(commands.Cog):
 			if sel > len(caught_pokemon) or sel < 0:
 				await ctx.send("Invalid value!")
 				return
-		pass # add viewing info here later
+			goal = caught_pokemon[sel - 1]["level"] * 5
+			embed = discord.Embed(
+				title = caught_pokemon[sel - 1]["name"],
+				description = (
+					f"EXP: *{str(levelamt)}/{goal}*\n"
+				),
+				color = discord.Color(0).from_rgb(255,255,255)
+			)
+			img = discord.File(str(bundled_data_path(self) / "images" / (str(id).zfill(3) + str(caught_pokemon[sel - 1]["name"]) + ".png")), filename="pokemon.png")
+			embed.set_image(url="attachment://pokemon.jpg")
+			await ctx.send(embed=embed, files=[img])
+			return
 		# if no pokemon
 		if len(caught_pokemon) == 0:
 			desc = "(No pokemon caught yet!)"
@@ -166,7 +182,7 @@ class Pokemon(commands.Cog):
 		for x in range (len(whitelisted_channels)):
 			c = self.bot.get_channel(whitelisted_channels[x])
 			channelslist += c.name + " "
-		await ctx.send(f"**Debug:**\nWhitelisted channels: {channelslist}\nRandom level value: {str(random_levels)}\nAmount of pokemon shown: {str(show_pokemon_amt)}\nHeld pokemon: {str(held_pokemon)}\nLevel amt: {str(levelamt)}\nLevel goal: {goal}")
+		await ctx.send(f"**Debug:**\nWhitelisted channels: {channelslist}\nRandom level value: {str(random_levels)}\nAmount of pokemon shown: {str(show_pokemon_amt)}\nHeld pokemon: {str(held_pokemon)}\nEXP: {str(levelamt)}/{goal}")
 		await ctx.send("Caught pokemon:")
 		def chunker(seq, size):
 			return (seq[pos:pos + size] for pos in range(0, len(seq), size))
@@ -205,6 +221,8 @@ class Pokemon(commands.Cog):
 			await ctx.send("Invalid value!")
 
 	async def on_message(self, message):
+		if isinstance(message.author, discord.User):
+			return
 		# levelup / exp
 		await self.levelup(message.author)
 		# spawning pokemon
@@ -213,7 +231,7 @@ class Pokemon(commands.Cog):
 			#randint(180, 300)
 			if time.time() - t >= 10:
 				ready = await self.config.guild(message.guild).ready()
-				if ready == False:
+				if not ready:
 					with open (str(bundled_data_path(self)) + "\\pokedex.json", encoding="utf8") as f:
 						pokemon = json.load(f)
 					id = randint(1, len(pokemon))
@@ -257,7 +275,7 @@ class Pokemon(commands.Cog):
 							await spawn.send(embed=embed)
 						await spawn.send(f"Pokemon is {name}.")
 						try:
-							guess = await self.bot.wait_for('message', check=check, timeout=20)
+							guess = await self.bot.wait_for("message", check=check, timeout=20)
 						except asyncio.TimeoutError:
 							await spawn.send("No one responded in time!")
 							await self.config.guild(message.guild).ready.set(False)
