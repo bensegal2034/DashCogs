@@ -145,9 +145,33 @@ class Pokemon(commands.Cog):
 	@checks.guildowner()
 	@commands.guild_only()
 	@pokemonset.command()
-	async def whitelist(self, ctx):
-		"""When executed, will either add or remove the channel to the whitelist depending on context."""
+	async def whitelist(self, ctx, *, list = ""):
+		"""
+		Add or remove a channel to the whitelist depending on context.
+
+		To list all whitelisted channels, add 'list' after this command.
+		"""
 		async with self.config.guild(ctx.guild).whitelisted_channels() as whitelisted_channels:
+			if list == "list":
+				if len(whitelisted_channels) == 0:
+					await ctx.send("There are no currently whitelisted channels at this time.")
+					return
+				raw = []
+				for x in whitelisted_channels:
+					raw.append(ctx.guild.get_channel(x))
+				channels = [x.name for x in raw]
+				desc = [x.topic for x in raw]
+				msg = f"Whitelisted channels in {ctx.guild.name}:\n```\n"
+				cnt = 0
+				for x in channels:
+					if "\n" in str(desc[cnt]):
+						msg += f"#{x}: \n{desc[cnt]}\n---\n"
+					else:
+						msg += f"#{x}: {desc[cnt]}\n---\n"
+					cnt += 1
+				msg += "```"
+				await ctx.send(msg)
+				return
 			if ctx.channel.id in whitelisted_channels:
 				await ctx.send (f"Removing {ctx.channel.name} from whitelist.")
 				whitelisted_channels.remove(ctx.channel.id)
