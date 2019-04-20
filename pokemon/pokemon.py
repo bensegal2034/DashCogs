@@ -1,10 +1,11 @@
-import discord, json, time, asyncio
-from random import randint
 from redbot.core import commands
 from redbot.core import Config
 from redbot.core import checks
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 from redbot.core.data_manager import bundled_data_path
+from redbot.core.utils.chat_formatting import box
+import discord, json, time, asyncio
+from random import randint
 
 class Pokemon(commands.Cog):
 	"""A worse version of Pokecord."""
@@ -88,10 +89,16 @@ class Pokemon(commands.Cog):
 				title = caught_pokemon[sel - 1]["name"],
 				description = (
 					f"EXP: *{str(levelamt)}/{goal}*\n"
+					f"Types: *{str(caught_pokemon[sel - 1]['type'])}*\n"
+					f"HP: *{str(caught_pokemon[sel - 1]['hp'])}*\n"
+					f"Attack: *{str(caught_pokemon[sel - 1]['atk'])}*\n"
+					f"Defense: *{str(caught_pokemon[sel - 1]['def'])}*\n"
+					f"Special Attack: *{str(caught_pokemon[sel - 1]['spatk'])}*\n"
+					f"Special Defense: *{str(caught_pokemon[sel - 1]['spdef'])}*\n"
 				),
 				color = discord.Color(0).from_rgb(255,255,255)
 			)
-			img = discord.File(str(bundled_data_path(self) / "images" / (str(id).zfill(3) + str(caught_pokemon[sel - 1]["name"]) + ".png")), filename="pokemon.png")
+			img = discord.File(str(bundled_data_path(self) / "images" / (str(pid).zfill(3) + str(caught_pokemon[sel - 1]["name"]) + ".png")), filename="pokemon.png")
 			embed.set_image(url="attachment://pokemon.jpg")
 			await ctx.send(embed=embed, files=[img])
 			return
@@ -161,7 +168,7 @@ class Pokemon(commands.Cog):
 					raw.append(ctx.guild.get_channel(x))
 				channels = [x.name for x in raw]
 				desc = [x.topic for x in raw]
-				msg = f"Whitelisted channels in {ctx.guild.name}:\n```\n"
+				msg = f"Whitelisted channels in {ctx.guild.name}:\n"
 				cnt = 0
 				for x in channels:
 					if "\n" in str(desc[cnt]):
@@ -169,8 +176,7 @@ class Pokemon(commands.Cog):
 					else:
 						msg += f"#{x}: {desc[cnt]}\n---\n"
 					cnt += 1
-				msg += "```"
-				await ctx.send(msg)
+				await ctx.send(box(msg))
 				return
 			if ctx.channel.id in whitelisted_channels:
 				await ctx.send (f"Removing {ctx.channel.name} from whitelist.")
@@ -211,11 +217,7 @@ class Pokemon(commands.Cog):
 		def chunker(seq, size):
 			return (seq[pos:pos + size] for pos in range(0, len(seq), size))
 		for x in chunker(str(caught_pokemon), 1992):
-			msg = (
-				"```\n"
-				f"{x}"
-				"```"
-			)
+			msg = (box(f"{x}"))
 			await ctx.send(msg)
 
 	@checks.guildowner()
@@ -252,8 +254,7 @@ class Pokemon(commands.Cog):
 		# spawning pokemon
 		async with self.config.member(message.author).caught_pokemon() as caught_pokemon:
 			t = await self.config.guild(message.guild).t()
-			#randint(180, 300)
-			if time.time() - t >= 10:
+			if time.time() - t >= randint(180, 300):
 				ready = await self.config.guild(message.guild).ready()
 				if not ready:
 					with open (str(bundled_data_path(self)) + "\\pokedex.json", encoding="utf8") as f:
