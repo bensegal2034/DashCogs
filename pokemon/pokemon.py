@@ -51,7 +51,7 @@ class Pokemon(commands.Cog):
 
 	@commands.command(aliases=["pprint"])
 	async def printpokemon(self, ctx, id : int = 1):
-		"""Shows a pokemon's statistics based on its ID or name."""
+		"""Shows a pokemon's statistics based on its ID."""
 		with open (str(bundled_data_path(self)) + "\\pokedex.json", encoding="utf8") as f:
 			pokemon = json.load(f)
 		try:
