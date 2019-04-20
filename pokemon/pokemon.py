@@ -284,7 +284,6 @@ class Pokemon(commands.Cog):
 			else:
 				await ctx.send("Cancelling request to clear guild data.")
 
-
 	@checks.guildowner()
 	@commands.guild_only()
 	@pokemonset.command()
