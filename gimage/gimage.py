@@ -70,8 +70,7 @@ class GImage(commands.Cog):
 		"""Add or remove a person to the blocked list of people not allowed to use GImage."""
 		async with self.config.guild(ctx.guild).blocked_members() as blocked_members:
 			if mem is None:
-				await ctx.send("Please specify a person to block.")
-				return
+				return await ctx.send("Please specify a person to block.")
 			if mem.id in blocked_members:
 				blocked_members.remove(mem.id)
 				await ctx.send(f"{mem.display_name} removed from block list.")

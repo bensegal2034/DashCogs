@@ -59,8 +59,7 @@ class SelfMessage(commands.Cog):
 		"""
 		g = self.bot.get_guild(await self.config.server())
 		if ch is None:
-			await ctx.send("Please specify a channel!")
-			return
+			return await ctx.send("Please specify a channel!")
 		await self.config.chn.set(ch.id)
 		await ctx.send(f"Channel set to #{ch.name}.")
 
@@ -81,8 +80,7 @@ class SelfMessage(commands.Cog):
 		"""Add or remove a person to the list of people allowed to use SelfMessage."""
 		async with self.config.access() as access:
 			if mem is None:
-				await ctx.send("Please specify a person to add.")
-				return
+				return await ctx.send("Please specify a person to add.")
 			if mem.id in access:
 				access.remove(mem.id)
 				await ctx.send(f"{mem.display_name} is now disallowed from using SelfMessage.")

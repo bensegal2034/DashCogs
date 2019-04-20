@@ -68,15 +68,13 @@ class Pokemon(commands.Cog):
 		try:
 			await ctx.send(f"Pokemon's name is {pokemon[id - 1]['name']['english']}.")
 		except:
-			await ctx.send("Invalid ID!")
-			return
+			return await ctx.send("Invalid ID!")
 		await ctx.send(f"{'Type is' if len(pokemon[id - 1]['type']) == 1 else 'Types are'}: " + str(", ".join(pokemon[id - 1]["type"])))
 		await ctx.send(f"HP: {str(pokemon[id - 1]['base']['HP'])}\nAttack: {str(pokemon[id - 1]['base']['Attack'])}\nDefense: {str(pokemon[id - 1]['base']['Defense'])}\nSpecial Attack: {str(pokemon[id - 1]['base']['Sp. Attack'])}\nSpecial Defense: {str(pokemon[id - 1]['base']['Sp. Defense'])}\nSpeed: {str(pokemon[id - 1]['base']['Speed'])}")
 		try:
 			await ctx.send(file=discord.File(str(bundled_data_path(self)) + "\\images\\" + str(id).zfill(3) + str(pokemon[id - 1]["name"]["english"]) + ".png", filename="pokemon.png"))
 		except:
-			await ctx.send("No image avaliable!")
-			return
+			return await ctx.send("No image avaliable!")
 
 	@commands.command(aliases=["pinfo"])
 	async def pokemoninfo(self, ctx, sel : int = 0):
@@ -94,8 +92,7 @@ class Pokemon(commands.Cog):
 		v = 0
 		if sel != 0:
 			if sel > len(caught_pokemon) or sel < 0:
-				await ctx.send("Invalid value!")
-				return
+				return await ctx.send("Invalid value!")
 			goal = caught_pokemon[sel - 1]["level"] * 5
 			embed = discord.Embed(
 				title = caught_pokemon[sel - 1]["name"],
@@ -180,8 +177,7 @@ class Pokemon(commands.Cog):
 		async with self.config.guild(ctx.guild).whitelisted_channels() as whitelisted_channels:
 			if list == "list":
 				if len(whitelisted_channels) == 0:
-					await ctx.send("There are no currently whitelisted channels at this time.")
-					return
+					return await ctx.send("There are no currently whitelisted channels at this time.")
 				raw = []
 				for x in whitelisted_channels:
 					raw.append(ctx.guild.get_channel(x))
@@ -195,8 +191,7 @@ class Pokemon(commands.Cog):
 					else:
 						msg += f"#{x}: {desc[cnt]}\n---\n"
 					cnt += 1
-				await ctx.send(box(msg))
-				return
+				return await ctx.send(box(msg))
 			if ctx.channel.id in whitelisted_channels:
 				await ctx.send (f"Removing {ctx.channel.name} from whitelist.")
 				whitelisted_channels.remove(ctx.channel.id)
@@ -497,10 +492,9 @@ class Pokemon(commands.Cog):
 						try:
 							guess = await self.bot.wait_for("message", check=check, timeout=20)
 						except asyncio.TimeoutError:
-							await spawn.send("No one responded in time!")
 							await self.config.guild(message.guild).ready.set(False)
 							await self.config.guild(message.guild).t.set(time.time())
-							return
+							return await spawn.send("No one responded in time!")
 						await spawn.send(f"Good job {guess.author.mention}! You caught a level {str(level)} {str(name)}!")
 						caught_pokemon.append({
 							"level": level,
