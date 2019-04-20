@@ -100,8 +100,8 @@ class Pokemon(commands.Cog):
 				color = discord.Color(0).from_rgb(255,255,255)
 			)
 			try:
-				img = discord.File(str(bundled_data_path(self) / "images" / (str(caught_pokemon[sel - 1]["trueid"]).zfill(3) + str(caught_pokemon[sel - 1]["name"]) + ".png")), filename="pokemon.jpg")
-				embed.set_image(url="attachment://pokemon.jpg")
+				img = discord.File(str(bundled_data_path(self) / "images" / (str(caught_pokemon[sel - 1]["trueid"]).zfill(3) + str(caught_pokemon[sel - 1]["name"]) + ".png")), filename="pokemon.png")
+				embed.set_image(url="attachment://pokemon.png")
 				await ctx.send(embed=embed, files=[img])
 			except:
 				embed.add_field(
