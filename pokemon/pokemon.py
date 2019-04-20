@@ -3,7 +3,7 @@ from redbot.core import Config
 from redbot.core import checks
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 from redbot.core.data_manager import bundled_data_path
-from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.chat_formatting import box, pagify
 import discord, json, time, asyncio
 from random import randint
 
@@ -17,7 +17,8 @@ class Pokemon(commands.Cog):
 			random_levels = 1,
 			show_pokemon_amt = 25,
 			ready = False,
-			t = time.time()
+			t = time.time(),
+			spawntime = [180, 300]
 		)
 		self.config.register_member(
 			caught_pokemon = [],
@@ -50,7 +51,7 @@ class Pokemon(commands.Cog):
 
 	@commands.command(aliases=["pprint"])
 	async def printpokemon(self, ctx, id : int = 1):
-		"""Shows a pokemon's statistics based on its ID."""
+		"""Shows a pokemon's statistics based on its ID or name."""
 		with open (str(bundled_data_path(self)) + "\\pokedex.json", encoding="utf8") as f:
 			pokemon = json.load(f)
 		try:
@@ -88,7 +89,7 @@ class Pokemon(commands.Cog):
 			embed = discord.Embed(
 				title = caught_pokemon[sel - 1]["name"],
 				description = (
-					f"EXP: *{str(levelamt)}/{goal}*\n"
+					f"EXP: *{str(levelamt)}/{goal}* (Level {caught_pokemon[sel - 1]['level']})\n"
 					f"Types: *{str(caught_pokemon[sel - 1]['type'])}*\n"
 					f"HP: *{str(caught_pokemon[sel - 1]['hp'])}*\n"
 					f"Attack: *{str(caught_pokemon[sel - 1]['atk'])}*\n"
@@ -98,9 +99,16 @@ class Pokemon(commands.Cog):
 				),
 				color = discord.Color(0).from_rgb(255,255,255)
 			)
-			img = discord.File(str(bundled_data_path(self) / "images" / (str(pid).zfill(3) + str(caught_pokemon[sel - 1]["name"]) + ".png")), filename="pokemon.png")
-			embed.set_image(url="attachment://pokemon.jpg")
-			await ctx.send(embed=embed, files=[img])
+			try:
+				img = discord.File(str(bundled_data_path(self) / "images" / (str(caught_pokemon[sel - 1]["trueid"]).zfill(3) + str(caught_pokemon[sel - 1]["name"]) + ".png")), filename="pokemon.jpg")
+				embed.set_image(url="attachment://pokemon.jpg")
+				await ctx.send(embed=embed, files=[img])
+			except:
+				embed.add_field(
+					name = "\u200b",
+					value = "No image avaliable!"
+				)
+				await ctx.send(embed=embed)
 			return
 		# if no pokemon
 		if len(caught_pokemon) == 0:
@@ -181,7 +189,6 @@ class Pokemon(commands.Cog):
 			if ctx.channel.id in whitelisted_channels:
 				await ctx.send (f"Removing {ctx.channel.name} from whitelist.")
 				whitelisted_channels.remove(ctx.channel.id)
-				await self.config.guild(ctx.guild).t.set(time.time())
 			else:
 				await ctx.send (f"Adding {ctx.channel.name} to whitelist.")
 				whitelisted_channels.append(ctx.channel.id)
@@ -198,6 +205,32 @@ class Pokemon(commands.Cog):
 	@checks.guildowner()
 	@commands.guild_only()
 	@pokemonset.command()
+	async def spawntime(self, ctx, timeone : int = None, timetwo : int = None):
+		"""
+		Set the amount of time it should take to spawn a pokemon in seconds. Cannot be less than or equal to 0.
+
+		Can either be one value or two, if the bot should pick a random time between these two values for every pokemon spawned.
+		"""
+		async with self.config.guild(ctx.guild).spawntime() as spawntime:
+			if timeone == None and timetwo == None:
+				return await ctx.send("Please input a number!")
+			if timeone > 0:
+				if timetwo == None:
+					# only one time value
+					for x in range(len(spawntime)):
+						spawntime[x] = timeone
+					await ctx.send(f"Time to spawn pokemon set to {timeone} seconds.")
+				else:
+					# two time values
+					spawntime[0] = timeone
+					spawntime[1] = timetwo
+					await ctx.send(f"Time to spawn pokemon set to a random number between {timeone} and {timetwo} seconds.")
+			else:
+				await ctx.send("Please input a valid number!")
+
+	@checks.guildowner()
+	@commands.guild_only()
+	@pokemonset.command()
 	async def debug(self, ctx):
 		"""Displays values relevant for debugging."""
 		guild = self.bot.get_guild(ctx.guild)
@@ -207,18 +240,50 @@ class Pokemon(commands.Cog):
 		caught_pokemon = await self.config.member(ctx.author).caught_pokemon()
 		levelamt = await self.config.member(ctx.author).levelamt()
 		held_pokemon = await self.config.member(ctx.author).held_pokemon()
+		paged = pagify(json.JSONEncoder(indent=4).encode(caught_pokemon))
 		channelslist = ""
-		goal = caught_pokemon[held_pokemon - 1]["level"] * 5
+		if len(caught_pokemon) > 0:
+			goal = caught_pokemon[held_pokemon - 1]["level"] * 5
+		else:
+			goal = None
 		for x in range (len(whitelisted_channels)):
 			c = self.bot.get_channel(whitelisted_channels[x])
 			channelslist += c.name + " "
 		await ctx.send(f"**Debug:**\nWhitelisted channels: {channelslist}\nRandom level value: {str(random_levels)}\nAmount of pokemon shown: {str(show_pokemon_amt)}\nHeld pokemon: {str(held_pokemon)}\nEXP: {str(levelamt)}/{goal}")
 		await ctx.send("Caught pokemon:")
-		def chunker(seq, size):
-			return (seq[pos:pos + size] for pos in range(0, len(seq), size))
-		for x in chunker(str(caught_pokemon), 1992):
-			msg = (box(f"{x}"))
-			await ctx.send(msg)
+		for page in paged:
+			await ctx.send(box(page))
+
+	@checks.is_owner()
+	@pokemonset.command()
+	async def resetdata(self, ctx, *, type = ""):
+		"""Clear pokemon data either for all members of guilds or all guilds. **THIS IS IRREVERSIBLE!**"""
+		check = lambda m: m.author.bot == False and (m.content.lower() == "y" or m.content.lower() == "n")
+		if type == "" or (type != "member" and type != "guild"):
+			return await ctx.send("Please specify the type of data to reset. Either `guild` or `member` is valid.")
+		if type == "member":
+			await ctx.send("Are you **SURE** you want to delete all *member* data? Please type Y/N in chat to confirm.")
+			try:
+				a = await self.bot.wait_for("message", check=check, timeout=20)
+			except asyncio.TimeoutError:
+				await ctx.send("No one responded in time. Cancelling request.")
+			if a.content.lower() == "y":
+				await self.config.clear_all_members()
+				await ctx.send("All member data cleared successfully.")
+			else:
+				await ctx.send("Cancelling request to clear member data.")
+		elif type == "guild":
+			await ctx.send("Are you **SURE** you want to delete all *guild* data? Please type Y/N in chat to confirm.")
+			try:
+				a = await self.bot.wait_for("message", check=check, timeout=20)
+			except asyncio.TimeoutError:
+				await ctx.send("No one responded in time. Cancelling request.")
+			if a.content.lower() == "y":
+				await self.config.clear_all_guilds()
+				await ctx.send("All guild data cleared successfully.")
+			else:
+				await ctx.send("Cancelling request to clear guild data.")
+
 
 	@checks.guildowner()
 	@commands.guild_only()
@@ -254,7 +319,12 @@ class Pokemon(commands.Cog):
 		# spawning pokemon
 		async with self.config.member(message.author).caught_pokemon() as caught_pokemon:
 			t = await self.config.guild(message.guild).t()
-			if time.time() - t >= randint(180, 300):
+			spawntime = await self.config.guild(message.guild).spawntime()
+			if spawntime[0] == spawntime[1]:
+				truespawn = spawntime[0]
+			else:
+				truespawn = randint(spawntime[0], spawntime[1])
+			if time.time() - t >= truespawn:
 				ready = await self.config.guild(message.guild).ready()
 				if not ready:
 					with open (str(bundled_data_path(self)) + "\\pokedex.json", encoding="utf8") as f:
@@ -311,13 +381,14 @@ class Pokemon(commands.Cog):
 							"level": level,
 							"name": name,
 							"id": len(caught_pokemon) + 1,
+							"trueid": pokemon[id - 1]["id"],
 							"type": str(pokemon[id - 1]["type"]).strip("[]"),
-							"hp": str(pokemon[id - 1]["base"]["HP"]),
-							"atk": str(pokemon[id - 1]["base"]["Attack"]),
-							"def": str(pokemon[id - 1]["base"]["Defense"]),
-							"spatk": str(pokemon[id - 1]["base"]["Sp. Attack"]),
-							"spdef": str(pokemon[id - 1]["base"]["Sp. Defense"]),
-							"speed": str(pokemon[id - 1]["base"]["Speed"])
+							"hp": pokemon[id - 1]["base"]["HP"],
+							"atk": pokemon[id - 1]["base"]["Attack"],
+							"def": pokemon[id - 1]["base"]["Defense"],
+							"spatk": pokemon[id - 1]["base"]["Sp. Attack"],
+							"spdef": pokemon[id - 1]["base"]["Sp. Defense"],
+							"speed": pokemon[id - 1]["base"]["Speed"]
 						})
 						await self.config.guild(message.guild).ready.set(False)
 						await self.config.guild(message.guild).t.set(time.time())
