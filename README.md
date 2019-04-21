@@ -48,12 +48,12 @@ Play a text-based game based around the Pokemon series. Set up a whitelisted cha
 * `[p]pokemonselect <id>`: Select a pokemon to recieve EXP. If no pokemon is selected, this defaults to the first pokemon caught.
 * `[p]pokemonprint <search>`: Display a pokemon's base statistics. Can search by either name or ID.
 * `[p]pokemonset <setting>`: Manipulate various settings described below.
- * `[p]pokmemonset debug`: Display values relevant for debugging.
- * `[p]pokmemonset listamt <amt>`: Change the amount of pokemon that will be displayed per page on `[p]pokemonlist`. Cannot be higher than 50.
- * `[p]pokmemonset randomlevels`: Toggle whether pokemon should spawn with a random level when caught. If off, all pokemon will be caught at level 1.
- * `[p]pokmemonset resetdata <type>`: Reset all data for either all guilds or all members in the server that the command is executed inside of. Only the bot owner can use this command.
- * `[p]pokmemonset spawntime`: Set the amount of time that it should take for a pokemon to spawn, in seconds. Cannot be less than or equal to 0. Can either be one value or two, if the bot should pick a random time between these two values for every pokemon spawned.
- * `[p]pokmemonset whitelist <list>`: Add the current channel to the whitelist, or list all currently whitelisted channels by adding "list" after this command.
+  * `[p]pokmemonset debug`: Display values relevant for debugging.
+  * `[p]pokmemonset listamt <amt>`: Change the amount of pokemon that will be displayed per page on `[p]pokemonlist`. Cannot be higher than 50.
+  * `[p]pokmemonset randomlevels`: Toggle whether pokemon should spawn with a random level when caught. If off, all pokemon will be caught at level 1.
+  * `[p]pokmemonset resetdata <type>`: Reset all data for either all guilds or all members in the server that the command is executed inside of. Only the bot owner can use this command.
+  * `[p]pokmemonset spawntime`: Set the amount of time that it should take for a pokemon to spawn, in seconds. Cannot be less than or equal to 0. Can either be one value or two, if the bot should pick a random time between these two values for every pokemon spawned.
+  * `[p]pokmemonset whitelist <list>`: Add the current channel to the whitelist, or list all currently whitelisted channels by adding "list" after this command.
 
 ## Coinflip
 
