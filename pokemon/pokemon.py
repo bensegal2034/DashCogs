@@ -61,7 +61,7 @@ class Pokemon(commands.Cog):
 					await self.config.member(author).levelamt.set(levelamt)
 
 	@commands.command(aliases=["pprint"])
-	async def printpokemon(self, ctx, id : int = 1):
+	async def pokemonprint(self, ctx, id : int = 1):
 		"""Shows a pokemon's statistics based on its ID."""
 		with open (str(bundled_data_path(self)) + "\\pokedex.json", encoding="utf8") as f:
 			pokemon = json.load(f)
