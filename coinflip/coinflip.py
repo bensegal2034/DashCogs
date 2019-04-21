@@ -52,4 +52,4 @@ class Coinflip(commands.Cog):
 				heads += 1
 			else:
 				tails += 1
-		await ctx.send (box(f"Out of {str(amt)} coinflips:\n{str(heads)} coin(s) landed on heads.\n{str(tails)} coin(s) landed on tails."))
+		await ctx.send (box(f"Out of {str(amt)} coinflips:\n{str(heads)} {'coin' if heads == 1 else 'coins'} landed on heads.\n{str(tails)} {'coin' if tails == 1 else 'coins'} landed on tails."))
