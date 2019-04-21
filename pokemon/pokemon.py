@@ -5,6 +5,7 @@ from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 from redbot.core.data_manager import bundled_data_path
 from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.utils.predicates import MessagePredicate
+from typing import Optional
 import discord, json, time, asyncio
 from random import randint
 
@@ -210,7 +211,7 @@ class Pokemon(commands.Cog):
 
 	@checks.guildowner()
 	@commands.guild_only()
-	@pokemonset.command()
+	@pokemonset.group(invoke_without_command=True)
 	async def spawntime(self, ctx, timeone : int = None, timetwo : int = None):
 		"""
 		Set the amount of time it should take to spawn a pokemon in seconds. Cannot be less than or equal to 0.
@@ -218,8 +219,6 @@ class Pokemon(commands.Cog):
 		Can either be one value or two, if the bot should pick a random time between these two values for every pokemon spawned.
 		"""
 		async with self.config.guild(ctx.guild).spawntime() as spawntime:
-			if list == "list":
-				return await ctx.send(f"The current spawn time is {str(spawntime[0]) if spawntime[0] == spawntime[1] else str(spawntime[0]) + '/' + spawntime[1]} seconds.")
 			if timeone == None and timetwo == None:
 				return await ctx.send("Please input a number!")
 			if timeone > 0:
@@ -235,6 +234,13 @@ class Pokemon(commands.Cog):
 					await ctx.send(f"Time to spawn pokemon set to a random number between {timeone} and {timetwo} seconds.")
 			else:
 				await ctx.send("Please input a valid number!")
+
+	@checks.guildowner()
+	@commands.guild_only()
+	@spawntime.command()
+	async def list(self, ctx):
+		async with self.config.guild(ctx.guild).spawntime() as spawntime:
+			await ctx.send(f"The current spawn time is {str(spawntime[0]) if spawntime[0] == spawntime[1] else str(spawntime[0]) + '/' + str(spawntime[1])} seconds.")
 
 	@checks.guildowner()
 	@commands.guild_only()
