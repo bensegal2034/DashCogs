@@ -27,8 +27,7 @@ Search for either one or multiple images on [Google Images](https://images.googl
 * `[p]img <search term>`: Download a single image. Only accepts one parameter, which is the image you would like to search for.
 * `[p]mimg <search term> <amount>`: Download multiple images. Accepts two parameters - the search and the amount of images to get. Please note that large amounts may crash the bot. In addition, search terms with a space must be put in quotes.
 * `[p]gimageset <setting>`: Manipulate various settings described below.
-  * `[p]gimageset toggleblock <user>`: Block or unblock a person from using GImage.
-  * `[p]gimageset blocklist`: View the list of people blocked from using GImage.
+  * `[p]gimageset block <user> <list>`: Block or unblock a person from using GImage. If "list" is added after this command, it will print a list of all people currently blocked from using GImage.
 
 ## SelfMessage
 
@@ -38,7 +37,7 @@ Type messages using your bot's account. In order to send a message, PM the bot w
   * `[p]selfmessageset server <server>`: Sets the server the bot should look for channels in. The bot must be in the server specified.
   * `[p]selfmessageset channel <channel>`: Sets the channel the bot should send messages in. The channel must be one the bot can see.
   * `[p]selfmessageset enabled`: Toggles on and off whether the bot owner sending a PM to their bot will send a message.
-  * `[p]selfmessageset toggleuser <user>`: Toggles on and off whether someone can use the cog besides the bot owner.
+  * `[p]selfmessageset user <user> <list>`: Toggles on and off whether someone can use the cog besides the bot owner. Add "list" to the end of this command to view all users allowed to use SelfMessage.
 
 ## Pokemon
   
