@@ -1,3 +1,4 @@
+[![discord server](https://discordapp.com/api/guilds/569601555821756417/embed.png)](https://discord.gg/bYrGzyX)
 [![Red cogs](https://img.shields.io/badge/Red--DiscordBot-cogs-red.svg)](https://github.com/Cog-Creators/Red-DiscordBot/tree/V3/develop)
 [![discord.py](https://img.shields.io/badge/discord-py-blue.svg)](https://github.com/Rapptz/discord.py)
 
