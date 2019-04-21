@@ -172,7 +172,7 @@ class Pokemon(commands.Cog):
 		"""
 		Add or remove a channel to the whitelist depending on context.
 
-		To list all whitelisted channels, add 'list' after this command.
+		To list all whitelisted channels, add "list" after this command.
 		"""
 		async with self.config.guild(ctx.guild).whitelisted_channels() as whitelisted_channels:
 			if list == "list":
@@ -218,6 +218,8 @@ class Pokemon(commands.Cog):
 		Can either be one value or two, if the bot should pick a random time between these two values for every pokemon spawned.
 		"""
 		async with self.config.guild(ctx.guild).spawntime() as spawntime:
+			if list == "list":
+				return await ctx.send(f"The current spawn time is {str(spawntime[0]) if spawntime[0] == spawntime[1] else str(spawntime[0]) + '/' + spawntime[1]} seconds.")
 			if timeone == None and timetwo == None:
 				return await ctx.send("Please input a number!")
 			if timeone > 0:

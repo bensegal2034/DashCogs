@@ -3,7 +3,9 @@ from redbot.core import commands
 from redbot.core import checks
 from redbot.core import Config
 from redbot.core.data_manager import cog_data_path
+from redbot.core.utils.chat_formatting import box
 import os
+from typing import Optional
 
 class SelfMessage(commands.Cog):
 	"""Allows the bot owner to send messages from the bot's account."""
@@ -75,8 +77,8 @@ class SelfMessage(commands.Cog):
 			await ctx.send("Toggled on.")
 
 	@checks.is_owner()
-	@selfmessageset.command()
-	async def toggleuser(self, ctx, *, mem : discord.Member = None):
+	@selfmessageset.group(invoke_without_command=True)
+	async def user(self, ctx, *, mem : Optional[discord.Member] = None):
 		"""Add or remove a person to the list of people allowed to use SelfMessage."""
 		async with self.config.access() as access:
 			if mem is None:
@@ -89,19 +91,18 @@ class SelfMessage(commands.Cog):
 				await ctx.send(f"{mem.display_name} is now allowed to use SelfMessage.")
 
 	@checks.is_owner()
-	@selfmessageset.command()
-	async def listusers(self, ctx):
+	@user.command()
+	async def list(self, ctx):
 		"""Show all users allowed to use SelfMessage."""
 		access = await self.config.access()
-		list = "```\n" + ctx.guild.get_member(self.bot.owner_id).display_name + " (Owner)\n"
+		list = ctx.guild.get_member(self.bot.owner_id).display_name + " (Owner)\n"
 		for x in range(len(access)):
 			try:
 				member = ctx.guild.get_member(access[x])
 				list += member.display_name + "\n"
 			except:
 				list += "<Removed member>\n"
-		list += "```"
-		await ctx.send(list)
+		await ctx.send(box(list))
 
 	async def on_message(self, message):
 		enabled = await self.config.enabled()
