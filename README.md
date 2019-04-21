@@ -37,7 +37,7 @@ Type messages using your bot's account. In order to send a message, PM the bot w
   * `[p]selfmessageset server <server>`: Sets the server the bot should look for channels in. The bot must be in the server specified.
   * `[p]selfmessageset channel <channel>`: Sets the channel the bot should send messages in. The channel must be one the bot can see.
   * `[p]selfmessageset enabled`: Toggles on and off whether the bot owner sending a PM to their bot will send a message.
-  * `[p]selfmessageset toggleuser <user>`: Toggles on and off whether someone can use the cog besides the bot owner.
+  * `[p]selfmessageset user <user> <list>`: Toggles on and off whether someone can use the cog besides the bot owner. Add "list" to the end of this command to view all users allowed to use SelfMessage.
 
 ## Pokemon
   
