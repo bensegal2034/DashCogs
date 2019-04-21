@@ -27,8 +27,7 @@ Search for either one or multiple images on [Google Images](https://images.googl
 * `[p]img <search term>`: Download a single image. Only accepts one parameter, which is the image you would like to search for.
 * `[p]mimg <search term> <amount>`: Download multiple images. Accepts two parameters - the search and the amount of images to get. Please note that large amounts may crash the bot. In addition, search terms with a space must be put in quotes.
 * `[p]gimageset <setting>`: Manipulate various settings described below.
-  * `[p]gimageset toggleblock <user>`: Block or unblock a person from using GImage.
-  * `[p]gimageset blocklist`: View the list of people blocked from using GImage.
+  * `[p]gimageset block <user> <list>`: Block or unblock a person from using GImage. If "list" is added after this command, it will print a list of all people currently blocked from using GImage.
 
 ## SelfMessage
 
