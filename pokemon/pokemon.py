@@ -397,7 +397,7 @@ class Pokemon(commands.Cog):
 			else:
 				await ctx.send("Cancelling import process.")
 		else:
-			await ctx.send("Okay. Ready to begin importing your pokemon?")
+			return await ctx.send("Unfortunately, this feature is not supported at the current time.")
 			try:
 				await self.bot.wait_for("message", check=pred, timeout=20)
 			except asyncio.TimeoutError:
@@ -424,8 +424,6 @@ class Pokemon(commands.Cog):
 					await ctx.send(f"Import successfully finished! All {str(count)} pokemon registered.\nTo view them, type [p]pokemoninfo.")
 					await resetvars()
 					imported = await self.config.member(ctx.author).imported.set(True)
-				else:
-					await ctx.send("This message should never appear... what just happened?")
 			else:
 				await ctx.send("Cancelling import process.")
 
