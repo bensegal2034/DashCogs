@@ -20,12 +20,7 @@ class Pokemon(commands.Cog):
 			show_pokemon_amt = 25,
 			ready = False,
 			t = time.time(),
-			spawntime = [180, 300],
-			importrunning = False,
-			runimportloop = True,
-			importauthorid = 0,
-			importquit = False,
-			importstop = False
+			spawntime = [180, 300]
 		)
 		self.config.register_member(
 			caught_pokemon = [],
@@ -139,7 +134,7 @@ class Pokemon(commands.Cog):
 					description = (desc),
 					color = await ctx.embed_color()
 				)
-				showpokemon.set_footer(text="To view more detailed information about your pokemon: [p]pokemoninfo (pokemon name)")
+				showpokemon.set_footer(text=f"To view more detailed information about your pokemon: {ctx.prefix}pokemoninfo (pokemon name)")
 				await ctx.send(embed=showpokemon)
 			# if multiple pages
 			else:
@@ -156,7 +151,7 @@ class Pokemon(commands.Cog):
 						description = (desc),
 						color = await ctx.embed_color()
 					)
-					embed.set_footer(text="To view more detailed information about your pokemon: [p]pokemoninfo (pokemon name)")
+					embed.set_footer(text=f"To view more detailed information about your pokemon: {ctx.prefix}pokemoninfo (pokemon name)")
 					embeds.append(embed)
 				await menu(ctx, pages=embeds, controls=DEFAULT_CONTROLS, message=None, timeout=20)
 
@@ -302,7 +297,7 @@ class Pokemon(commands.Cog):
 	@commands.guild_only()
 	@pokemonset.command()
 	async def listamt(self, ctx, amt : int = 25):
-		"""Amount of pokemon displayed on [p]pokemonlist. Cannot be set to higher than 50."""
+		"""Amount of pokemon displayed on `[p]pokemonlist.` Cannot be set to higher than 50."""
 		if amt <= 50 and amt >= 1:
 			await self.config.guild(ctx.guild).show_pokemon_amt.set(amt)
 			show_pokemon_amt = await self.config.guild(ctx.guild).show_pokemon_amt()
@@ -315,7 +310,7 @@ class Pokemon(commands.Cog):
 		"""
 		Select a pokemon to receive XP by its ID.
 
-		To retrieve an ID for your pokemon, do [p]pokemoninfo.
+		To retrieve an ID for your pokemon, do `[p]pokemoninfo.`
 		"""
 		caught_pokemon = await self.config.member(ctx.author).caught_pokemon()
 		if sel >= 1 and sel <= len(caught_pokemon):
@@ -334,17 +329,10 @@ class Pokemon(commands.Cog):
 		pred = MessagePredicate.yes_or_no(ctx)
 		pokecord = lambda m: m.author.bot == True and m.author.id == 365975655608745985
 		imported = await self.config.member(ctx.author).imported()
-		async def resetvars():
-			await self.config.guild(ctx.guild).importrunning.set(False)
-			await self.config.guild(ctx.guild).runimportloop.set(True)
-			await self.config.guild(ctx.guild).importquit.set(False)
-			await self.config.guild(ctx.guild).importstop.set(False)
-			await self.config.guild(ctx.guild).importauthorid.set(0)
-		async def cycleimport():
-			try:
-				m = await self.bot.wait_for("message", check=pokecord, timeout=20)
-			except asyncio.TimeoutError:
-				return await ctx.send("You didn't respond in time. Cancelling import process.")
+		temp = await self.config.member(ctx.author).caught_pokemon()
+		msgl = []
+		count = 0
+		async def cycleimport(m):
 			pokemon = m.embeds[0].description
 			lines = pokemon.split('\n')
 			pdict = {}
@@ -383,6 +371,7 @@ class Pokemon(commands.Cog):
 			await self.bot.wait_for("message", check=pred, timeout=20)
 		except asyncio.TimeoutError:
 			return await ctx.send("You didn't respond in time. Cancelling import process.")
+		# single page import
 		if pred.result:
 			await ctx.send("Okay. Ready to begin importing your pokemon?")
 			try:
@@ -391,57 +380,50 @@ class Pokemon(commands.Cog):
 				return await ctx.send("You didn't respond in time. Cancelling import process.")
 			if pred.result:
 				await ctx.send("Please enter the command p!pokemon. \n\n*Pokecord must be able to see and type in this channel.*")
-				count = await cycleimport()
-				await ctx.send(f"Import successfully finished! All {str(count)} pokemon registered.\nTo view them, type [p]pokemoninfo.")
+				try:
+					m = await self.bot.wait_for("message", check=pokecord, timeout=20)
+				except asyncio.TimeoutError:
+					return await ctx.send("You didn't respond in time. Cancelling import process.")
+				count += await cycleimport(m)
+				await m.add_reaction("\N{WHITE HEAVY CHECK MARK}")
+				await ctx.send(f"Import successfully finished! All {str(count)} pokemon registered.\nTo view them, type {ctx.prefix}pokemoninfo.")
 				imported = await self.config.member(ctx.author).imported.set(True)
 			else:
 				await ctx.send("Cancelling import process.")
+		# multiple page import
 		else:
-			return await ctx.send("Unfortunately, this feature is not supported at the current time.")
+			await ctx.send("Okay. Ready to begin importing your pokemon?")
 			try:
 				await self.bot.wait_for("message", check=pred, timeout=20)
 			except asyncio.TimeoutError:
 				return await ctx.send("You didn't respond in time. Cancelling import process.")
 			if pred.result:
-				await ctx.send("Please sequentially list your pokemon using p!pokemon. Once you are finished, type \"stop\" to finish transferring pokemon. Please do not list the same page more than once, as this will cause duplicates. If this happens, type \"quit\" to cancel the import. \n\n*Pokecord must be able to see and type in this channel.*")
-				temp = await self.config.member(ctx.author).caught_pokemon()
-				runimportloop = await self.config.guild(ctx.guild).runimportloop()
-				await self.config.guild(ctx.guild).importrunning.set(True)
-				await self.config.guild(ctx.guild).importauthorid.set(ctx.author.id)
-				count = 0
-				while runimportloop:
-					runimportloop = await self.config.guild(ctx.guild).runimportloop()
-					if not runimportloop:
+				await ctx.send("Please sequentially list your pokemon using p!pokemon [page]. Once you are finished, wait and do NOT type any other Pokecord commands. The bot will instruct you from there.\n\n*Pokecord must be able to see and type in this channel.*")
+				while True:
+					try:
+						m = await self.bot.wait_for("message", check=pokecord, timeout=15)
+					except asyncio.TimeoutError:
 						break
-					count += await cycleimport()
-				importquit = await self.config.guild(ctx.guild).importquit()
-				importstop = await self.config.guild(ctx.guild).importquit()
-				if importquit:
-					await ctx.send("Import aborted. Restoring previous pokemon.")
+					msgl.append(m)
+					await m.add_reaction("\N{WHITE HEAVY CHECK MARK}")
+				for x in msgl:
+					count += await cycleimport(x)
+				await ctx.send(f"Finished importing pokemon! {str(count)} pokemon have been recognized. Finalize their imports?\n\n*You may want to check p!pokemon to see if this number matches the amount listed there.*")
+				try:
+					m = await self.bot.wait_for("message", check=pred, timeout=60)
+				except asyncio.TimeoutError:
+					await ctx.send("You didn't respond in time. Cancelling import process.")
+				if pred.result:
+					await ctx.send(f"Import successfully finished! All {str(count)} pokemon registered.\nTo view them, type {ctx.prefix}pokemoninfo.")
+				else:
 					await self.config.member(ctx.author).caught_pokemon.set(temp)
-					await resetvars()
-				elif importstop:
-					await ctx.send(f"Import successfully finished! All {str(count)} pokemon registered.\nTo view them, type [p]pokemoninfo.")
-					await resetvars()
-					imported = await self.config.member(ctx.author).imported.set(True)
-			else:
-				await ctx.send("Cancelling import process.")
+					await ctx.send("Import cancelled. No pokemon imported.")
 
 	async def on_message(self, message):
 		if isinstance(message.author, discord.User):
 			return
 		# levelup / exp
 		await self.levelup(message.author)
-		# import quit / stop
-		importrunning = await self.config.guild(message.guild).importrunning()
-		importauthorid = await self.config.guild(message.guild).importauthorid()
-		if importrunning:
-			if message.content.lower() == "quit" and importauthorid == message.author.id:
-				await self.config.guild(message.guild).runimportloop.set(False)
-				await self.config.guild(message.guild).importquit.set(True)
-			if message.content.lower() == "stop" and importauthorid == message.author.id:
-				await self.config.guild(message.guild).runimportloop.set(False)
-				await self.config.guild(message.guild).importstop.set(True)
 		# spawning pokemon
 		async with self.config.member(message.author).caught_pokemon() as caught_pokemon:
 			t = await self.config.guild(message.guild).t()
