@@ -10,7 +10,7 @@ import discord, json, time, asyncio
 from random import randint
 
 class Pokemon(commands.Cog):
-	"""A worse version of Pokecord."""
+	"""A worse version of Pokécord."""
 	def __init__(self, bot):
 		self.bot = bot
 		self.config = Config.get_conf(self, identifier=99280384939814912)
@@ -56,28 +56,51 @@ class Pokemon(commands.Cog):
 					levelamt += 1
 					await self.config.member(author).levelamt.set(levelamt)
 
-	@commands.command(aliases=["pprint"])
-	async def pokemonprint(self, ctx, id : int = 1):
-		"""Shows a pokemon's statistics based on its ID."""
+	@commands.command(aliases=["plookup"])
+	async def pokemonlookup(self, ctx, search = None):
+		"""Shows a Pokémon's statistics based on its ID or name."""
+		id = None
 		with open (str(bundled_data_path(self)) + "\\pokedex.json", encoding="utf8") as f:
 			pokemon = json.load(f)
+		if search == None:
+			return await ctx.send("You must either enter an ID or a Pokémon name!")
+		if type(search) is not int:
+			for index in range(len(pokemon)):
+				if pokemon[index]["name"]["english"] == search.capitalize():
+					id = pokemon[index]["id"]
+			if id == None:
+				return await ctx.send(f"{search.capitalize()} is not a valid Pokémon!")
+		else:
+			id = pokemon[search - 1]
+		embed = discord.Embed(
+			title = pokemon[id - 1]["name"]["english"],
+			description = (
+				f"Types: *{str(pokemon[id - 1]['type']).strip('[]')}*\n"
+				f"HP: *{str(pokemon[id - 1]['base']['HP'])}*\n"
+				f"Attack: *{str(pokemon[id - 1]['base']['Attack'])}*\n"
+				f"Defense: *{str(pokemon[id - 1]['base']['Defense'])}*\n"
+				f"Special Attack: *{str(pokemon[id - 1]['base']['Sp. Attack'])}*\n"
+				f"Special Defense: *{str(pokemon[id - 1]['base']['Sp. Defense'])}*\n"
+			),
+			color = discord.Color(0).from_rgb(255,255,255)
+		)
 		try:
-			await ctx.send(f"Pokemon's name is {pokemon[id - 1]['name']['english']}.")
+			img = discord.File(str(bundled_data_path(self) / "images" / (str(id).zfill(3) + str(pokemon[id - 1]["name"]["english"]) + ".png")), filename="pokemon.png")
+			embed.set_image(url="attachment://pokemon.png")
+			await ctx.send(embed=embed, files=[img])
 		except:
-			return await ctx.send("Invalid ID!")
-		await ctx.send(f"{'Type is' if len(pokemon[id - 1]['type']) == 1 else 'Types are'}: " + str(", ".join(pokemon[id - 1]["type"])))
-		await ctx.send(f"HP: {str(pokemon[id - 1]['base']['HP'])}\nAttack: {str(pokemon[id - 1]['base']['Attack'])}\nDefense: {str(pokemon[id - 1]['base']['Defense'])}\nSpecial Attack: {str(pokemon[id - 1]['base']['Sp. Attack'])}\nSpecial Defense: {str(pokemon[id - 1]['base']['Sp. Defense'])}\nSpeed: {str(pokemon[id - 1]['base']['Speed'])}")
-		try:
-			await ctx.send(file=discord.File(str(bundled_data_path(self)) + "\\images\\" + str(id).zfill(3) + str(pokemon[id - 1]["name"]["english"]) + ".png", filename="pokemon.png"))
-		except:
-			return await ctx.send("No image avaliable!")
+			embed.add_field(
+				name = "\u200b",
+				value = "No image avaliable!"
+			)
+			await ctx.send(embed=embed)
 
 	@commands.command(aliases=["pinfo"])
 	async def pokemoninfo(self, ctx, sel : int = 0):
 		"""
-		Shows all the pokemon you have caught.
+		Shows all the Pokémon you have caught.
 
-		You are also able to view detailed info about one particular pokemon by typing its ID after this command.
+		You are also able to view detailed info about one particular Pokémon by typing its ID after this command.
 		"""
 		caught_pokemon = await self.config.member(ctx.author).caught_pokemon()
 		show_pokemon_amt = await self.config.guild(ctx.guild).show_pokemon_amt()
@@ -116,9 +139,9 @@ class Pokemon(commands.Cog):
 			return
 		# if no pokemon
 		if len(caught_pokemon) == 0:
-			desc = "(No pokemon caught yet!)"
+			desc = "(No Pokémon caught yet!)"
 			showpokemon = discord.Embed(
-				title = "Your pokémon:",
+				title = "Your Pokémon:",
 				description = (desc),
 				color = await ctx.embed_color()
 			)
@@ -130,11 +153,11 @@ class Pokemon(commands.Cog):
 				for x in range (len(caught_pokemon)):
 					desc += "**" + str(caught_pokemon[x]["name"]) + "** | Level: *" + str(caught_pokemon[x]["level"]) + "*  | ID: *" + str(caught_pokemon[x]["id"]) + "*\n"
 				showpokemon = discord.Embed(
-					title = "Your pokémon:",
+					title = "Your Pokémon:",
 					description = (desc),
 					color = await ctx.embed_color()
 				)
-				showpokemon.set_footer(text=f"To view more detailed information about your pokemon: {ctx.prefix}pokemoninfo (pokemon name)")
+				showpokemon.set_footer(text=f"To view more detailed information about your Pokémon: {ctx.prefix}pokemoninfo [id]")
 				await ctx.send(embed=showpokemon)
 			# if multiple pages
 			else:
@@ -147,18 +170,18 @@ class Pokemon(commands.Cog):
 							run = False
 							break
 					embed = discord.Embed(
-						title = "Your pokémon:",
+						title = "Your Pokémon:",
 						description = (desc),
 						color = await ctx.embed_color()
 					)
-					embed.set_footer(text=f"To view more detailed information about your pokemon: {ctx.prefix}pokemoninfo (pokemon name)")
+					embed.set_footer(text=f"To view more detailed information about your Pokémon: {ctx.prefix}pokemoninfo [id]")
 					embeds.append(embed)
 				await menu(ctx, pages=embeds, controls=DEFAULT_CONTROLS, message=None, timeout=20)
 
 	@checks.guildowner()
 	@commands.group(aliases=["pset"])
 	async def pokemonset(self, ctx):
-		"""All settings relating to pokemon. Settings are saved per guild."""
+		"""All settings relating to Pokémon. Settings are saved per guild."""
 		pass
 
 	@checks.guildowner()
@@ -199,7 +222,7 @@ class Pokemon(commands.Cog):
 	@commands.guild_only()
 	@pokemonset.command()
 	async def randomlevels(self, ctx, val : bool = None):
-		"""Turn on or off whether or not pokemon should be set to a random level when caught."""
+		"""Turn on or off whether or not Pokémon should be set to a random level when caught."""
 		await self.config.guild(ctx.guild).random_levels.set(val)
 		random_levels = await self.config.guild(ctx.guild).random_levels()
 		await ctx.send (f"{'Turned on random level spawns.' if random_levels == 1 else 'Turned off random level spawns.'}")
@@ -221,12 +244,12 @@ class Pokemon(commands.Cog):
 					# only one time value
 					for x in range(len(spawntime)):
 						spawntime[x] = timeone
-					await ctx.send(f"Time to spawn pokemon set to {timeone} seconds.")
+					await ctx.send(f"Time to spawn Pokémon set to {timeone} seconds.")
 				else:
 					# two time values
 					spawntime[0] = timeone
 					spawntime[1] = timetwo
-					await ctx.send(f"Time to spawn pokemon set to a random number between {timeone} and {timetwo} seconds.")
+					await ctx.send(f"Time to spawn Pokémon set to a random number between {timeone} and {timetwo} seconds.")
 			else:
 				await ctx.send("Please input a valid number!")
 
@@ -258,15 +281,15 @@ class Pokemon(commands.Cog):
 		for x in range (len(whitelisted_channels)):
 			c = self.bot.get_channel(whitelisted_channels[x])
 			channelslist += c.name + " "
-		await ctx.send(f"**Debug:**\nWhitelisted channels: {channelslist}\nRandom level value: {str(random_levels)}\nAmount of pokemon shown: {str(show_pokemon_amt)}\nHeld pokemon: {str(held_pokemon)}\nEXP: {str(levelamt)}/{goal}")
-		await ctx.send("Caught pokemon:")
+		await ctx.send(f"**Debug:**\nWhitelisted channels: {channelslist}\nRandom level value: {str(random_levels)}\nAmount of pokemon shown: {str(show_pokemon_amt)}\nHeld Pokémon: {str(held_pokemon)}\nEXP: {str(levelamt)}/{goal}")
+		await ctx.send("Caught Pokémon:")
 		for page in paged:
 			await ctx.send(box(page))
 
 	@checks.is_owner()
 	@pokemonset.command()
 	async def resetdata(self, ctx, *, type = ""):
-		"""Clear pokemon data either for all members of guilds or all guilds. **THIS IS IRREVERSIBLE!**"""
+		"""Clear Pokémon data either for all members of guilds or all guilds. **THIS IS IRREVERSIBLE!**"""
 		check = MessagePredicate.yes_or_no(ctx)
 		if type == "" or (type != "member" and type != "guild"):
 			return await ctx.send("Please specify the type of data to reset. Either `guild` or `member` is valid.")
@@ -297,7 +320,7 @@ class Pokemon(commands.Cog):
 	@commands.guild_only()
 	@pokemonset.command()
 	async def listamt(self, ctx, amt : int = 25):
-		"""Amount of pokemon displayed on `[p]pokemonlist.` Cannot be set to higher than 50."""
+		"""Set the amount of Pokémon displayed on `[p]pokemonlist.` Cannot be set to higher than 50."""
 		if amt <= 50 and amt >= 1:
 			await self.config.guild(ctx.guild).show_pokemon_amt.set(amt)
 			show_pokemon_amt = await self.config.guild(ctx.guild).show_pokemon_amt()
@@ -321,11 +344,7 @@ class Pokemon(commands.Cog):
 
 	@commands.command(aliases=["pimport"])
 	async def pokemonimport(self, ctx):
-		"""
-		Import pokemon data from Pokecord.
-
-		This can only be done once and is a bit unstable.
-		"""
+		"""Import Pokémon data from Pokécord. This can only be done once."""
 		pred = MessagePredicate.yes_or_no(ctx)
 		pokecord = lambda m: m.author.bot == True and m.author.id == 365975655608745985
 		imported = await self.config.member(ctx.author).imported()
@@ -365,40 +384,40 @@ class Pokemon(commands.Cog):
 						})
 			return len(pdict)
 		if imported:
-			return await ctx.send("You have already imported pokemon from Pokecord!")
-		await ctx.send("Are your pokemon able to be displayed on one page of Pokecord?")
+			return await ctx.send("You have already imported Pokémon from Pokécord!")
+		await ctx.send("Are your Pokémon able to be displayed on one page of Pokécord?")
 		try:
 			await self.bot.wait_for("message", check=pred, timeout=20)
 		except asyncio.TimeoutError:
 			return await ctx.send("You didn't respond in time. Cancelling import process.")
 		# single page import
 		if pred.result:
-			await ctx.send("Okay. Ready to begin importing your pokemon?")
+			await ctx.send("Okay. Ready to begin importing your Pokémon?")
 			try:
 				await self.bot.wait_for("message", check=pred, timeout=20)
 			except asyncio.TimeoutError:
 				return await ctx.send("You didn't respond in time. Cancelling import process.")
 			if pred.result:
-				await ctx.send("Please enter the command p!pokemon. \n\n*Pokecord must be able to see and type in this channel.*")
+				await ctx.send("Please enter the command p!pokemon. \n\n*Pokécord must be able to see and type in this channel.*")
 				try:
 					m = await self.bot.wait_for("message", check=pokecord, timeout=20)
 				except asyncio.TimeoutError:
 					return await ctx.send("You didn't respond in time. Cancelling import process.")
 				count += await cycleimport(m)
 				await m.add_reaction("\N{WHITE HEAVY CHECK MARK}")
-				await ctx.send(f"Import successfully finished! All {str(count)} pokemon registered.\nTo view them, type {ctx.prefix}pokemoninfo.")
+				await ctx.send(f"Import successfully finished! All {str(count)} Pokémon registered.\nTo view them, type {ctx.prefix}pokemoninfo.")
 				imported = await self.config.member(ctx.author).imported.set(True)
 			else:
 				await ctx.send("Cancelling import process.")
 		# multiple page import
 		else:
-			await ctx.send("Okay. Ready to begin importing your pokemon?")
+			await ctx.send("Okay. Ready to begin importing your Pokémon?")
 			try:
 				await self.bot.wait_for("message", check=pred, timeout=20)
 			except asyncio.TimeoutError:
 				return await ctx.send("You didn't respond in time. Cancelling import process.")
 			if pred.result:
-				await ctx.send("Please sequentially list your pokemon using p!pokemon [page]. Once you are finished, wait and do NOT type any other Pokecord commands. The bot will instruct you from there.\n\n*Pokecord must be able to see and type in this channel.*")
+				await ctx.send("Please sequentially list your Pokémon using p!pokemon [page]. Once you are finished, wait and do NOT type any other Pokécord commands. The bot will instruct you from there.\n\n*Pokécord must be able to see and type in this channel.*")
 				while True:
 					try:
 						m = await self.bot.wait_for("message", check=pokecord, timeout=15)
@@ -408,16 +427,16 @@ class Pokemon(commands.Cog):
 					await m.add_reaction("\N{WHITE HEAVY CHECK MARK}")
 				for x in msgl:
 					count += await cycleimport(x)
-				await ctx.send(f"Finished importing pokemon! {str(count)} pokemon have been recognized. Finalize their imports?\n\n*You may want to check p!pokemon to see if this number matches the amount listed there.*")
+				await ctx.send(f"Finished importing Pokémon! {str(count)} Pokémon have been recognized. Finalize their imports?\n\n*You may want to check p!pokemon to see if this number matches the amount listed there.*")
 				try:
 					m = await self.bot.wait_for("message", check=pred, timeout=60)
 				except asyncio.TimeoutError:
 					await ctx.send("You didn't respond in time. Cancelling import process.")
 				if pred.result:
-					await ctx.send(f"Import successfully finished! All {str(count)} pokemon registered.\nTo view them, type {ctx.prefix}pokemoninfo.")
+					await ctx.send(f"Import successfully finished! All {str(count)} Pokémon registered.\nTo view them, type {ctx.prefix}pokemoninfo.")
 				else:
 					await self.config.member(ctx.author).caught_pokemon.set(temp)
-					await ctx.send("Import cancelled. No pokemon imported.")
+					await ctx.send("Import cancelled. No Pokémon imported.")
 
 	async def on_message(self, message):
 		if isinstance(message.author, discord.User):
@@ -461,22 +480,21 @@ class Pokemon(commands.Cog):
 						await self.config.guild(message.guild).ready.set(True)
 						try:
 							embed = discord.Embed(
-								title = "A wild pokemon has appeared!",
+								title = "A wild Pokémon has appeared!",
 								color = discord.Color(0).from_rgb(255,0,0)
 							)
 							img = discord.File(str(bundled_data_path(self) / "images" / (str(id).zfill(3) + str(pokemon[id - 1]["name"]["english"]) + ".png")), filename="pokemon.png")
 							embed.set_image(url="attachment://pokemon.png")
-							embed.set_footer(text="To catch the pokemon, type its name in chat!")
+							embed.set_footer(text="To catch the Pokémon, type its name in chat!")
 							await spawn.send(embed=embed, files=[img])
 						except:
 							embed = discord.Embed(
-								title = "A wild pokemon has appeared!",
+								title = "A wild Pokémon has appeared!",
 								description = ("No image avaliable!"),
 								color = discord.Color(0).from_rgb(255,0,0)
 							)
-							embed.set_footer(text="To catch the pokemon, type its name in chat!")
+							embed.set_footer(text="To catch the Pokémon, type its name in chat!")
 							await spawn.send(embed=embed)
-						await spawn.send(f"Pokemon is {name}.")
 						try:
 							guess = await self.bot.wait_for("message", check=check, timeout=20)
 						except asyncio.TimeoutError:
