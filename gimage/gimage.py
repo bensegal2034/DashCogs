@@ -1,8 +1,10 @@
 import discord
 from redbot.core import commands
-from redbot.core.data_manager import cog_data_path
 from redbot.core import checks
 from redbot.core import Config
+from redbot.core.data_manager import cog_data_path
+from redbot.core.utils.chat_formatting import box
+from typing import Optional
 from google_images_download import google_images_download
 import os, shutil
 
@@ -21,7 +23,14 @@ class GImage(commands.Cog):
 		if ctx.author.id in blocked_members:
 			return
 		image = google_images_download.googleimagesdownload().download({"keywords": req, "limit": 1, "output_directory": str(cog_data_path(self))})
-		await ctx.send(file=discord.File(image[req][0]))
+		try:
+			await ctx.send(file=discord.File(image[req][0]))
+		except:
+			embed = discord.Embed(
+				description="Error uploading file!",
+				color = discord.Color(0).from_rgb(255,0,0)
+			)
+			await ctx.send(embed=embed)
 		folder = cog_data_path(self)
 		for the_file in os.listdir(folder):
 			file_path = os.path.join(folder, the_file)
@@ -46,7 +55,11 @@ class GImage(commands.Cog):
 			try:
 				await ctx.send(file=discord.File(image[req][x]))
 			except:
-				await ctx.send("**Error uploading file!**")
+				embed = discord.Embed(
+					description="Error uploading file!",
+					color = discord.Color(0).from_rgb(255,0,0)
+				)
+				await ctx.send(embed=embed)
 		folder = cog_data_path(self)
 		for the_file in os.listdir(folder):
 			file_path = os.path.join(folder, the_file)
@@ -65,13 +78,12 @@ class GImage(commands.Cog):
 
 	@checks.guildowner()
 	@commands.guild_only()
-	@gimageset.command()
-	async def toggleblock(self, ctx, *, mem : discord.Member = None):
+	@gimageset.group(invoke_without_command=True)
+	async def block(self, ctx, *, mem : Optional[discord.Member] = None):
 		"""Add or remove a person to the blocked list of people not allowed to use GImage."""
 		async with self.config.guild(ctx.guild).blocked_members() as blocked_members:
 			if mem is None:
-				await ctx.send("Please specify a person to block.")
-				return
+				return await ctx.send("Please specify a person to block.")
 			if mem.id in blocked_members:
 				blocked_members.remove(mem.id)
 				await ctx.send(f"{mem.display_name} removed from block list.")
@@ -81,16 +93,15 @@ class GImage(commands.Cog):
 
 	@checks.guildowner()
 	@commands.guild_only()
-	@gimageset.command()
-	async def blocklist(self, ctx):
+	@block.command()
+	async def list(self, ctx):
 		"""Displays all people blocked from using GImage."""
 		blocked_members = await self.config.guild(ctx.guild).blocked_members()
-		list = "```\n"
+		list = ""
 		for x in range(len(blocked_members)):
 			try:
 				member = ctx.guild.get_member(blocked_members[x])
-				list += member.display_name + "\n"
+				list += f"{member.display_name}\n"
 			except:
 				list += "<Removed member>\n"
-		list += "```"
-		await ctx.send(list)
+		await ctx.send(box(list))
