@@ -116,7 +116,6 @@ class Pokemon(commands.Cog):
 		for index in range(len(pokemon)):
 			if pokemon[index]["name"]["english"] == caught_pokemon[sel - 1]["name"]:
 				id = pokemon[index]["id"]
-		await ctx.send(id)
 		if sel != 0:
 			if sel > len(caught_pokemon) or sel < 0:
 				return await ctx.send("Invalid value!")
