@@ -1,3 +1,4 @@
-Pokemon;
+Pokemon:
 	- Add spawn rates based on 'value' of pokemon (go through pokedex.json and add a value from 1-5 for this)
-	- Add a shop where EXP boosters, 
+	- Add a shop where EXP boosters, Rare Stones/Evolution items and Rare Candies can be bought
+	- Add description for pokemon from pokeapi.json
