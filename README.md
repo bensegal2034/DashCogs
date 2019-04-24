@@ -46,7 +46,7 @@ Play a text-based game based around the Pokemon series. Set up a whitelisted cha
 * `[p]pokemonimport`: Import all your pokemon from Pokecord. The command will walk you through the steps to do so. Please note that this can only be done once per person.
 * `[p]pokemoninfo <id>`: Display all your pokemon that you have caught. It is also possible to view a detailed readout of each caught pokemon's statistics by adding their ID after this command.
 * `[p]pokemonselect <id>`: Select a pokemon to recieve EXP. If no pokemon is selected, this defaults to the first pokemon caught.
-* `[p]pokemonprint <search>`: Display a pokemon's base statistics. Can search by either name or ID.
+* `[p]pokemonlookup <search>`: Display a pokemon's base statistics. Can search by either name or ID.
 * `[p]pokemonset <setting>`: Manipulate various settings described below.
   * `[p]pokmemonset debug`: Display values relevant for debugging.
   * `[p]pokmemonset listamt <amt>`: Change the amount of pokemon that will be displayed per page on `[p]pokemonlist`. Cannot be higher than 50.
