@@ -102,6 +102,10 @@ class Pokemon(commands.Cog):
 
 		You are also able to view detailed info about one particular Pokémon by typing its ID after this command.
 		"""
+		with open (str(bundled_data_path(self)) + "\\pokeapi.json", encoding="utf8") as f:
+			pokeapi = json.load(f)
+		with open (str(bundled_data_path(self)) + "\\pokedex.json", encoding="utf8") as f:
+			pokemon = json.load(f)
 		caught_pokemon = await self.config.member(ctx.author).caught_pokemon()
 		show_pokemon_amt = await self.config.guild(ctx.guild).show_pokemon_amt()
 		levelamt = await self.config.member(ctx.author).levelamt()
@@ -109,6 +113,10 @@ class Pokemon(commands.Cog):
 		embeds = []
 		run = True
 		v = 0
+		for index in range(len(pokemon)):
+			if pokemon[index]["name"]["english"] == caught_pokemon[sel - 1]["name"]:
+				id = pokemon[index]["id"]
+		await ctx.send(id)
 		if sel != 0:
 			if sel > len(caught_pokemon) or sel < 0:
 				return await ctx.send("Invalid value!")
@@ -129,12 +137,22 @@ class Pokemon(commands.Cog):
 			try:
 				img = discord.File(str(bundled_data_path(self) / "images" / (str(caught_pokemon[sel - 1]["trueid"]).zfill(3) + str(caught_pokemon[sel - 1]["name"]) + ".png")), filename="pokemon.png")
 				embed.set_image(url="attachment://pokemon.png")
+				embed.add_field(
+					name = "\u200b",
+					value = pokeapi[id - 1]["description"]
+				)
+				embed.set_thumbnail(url=ctx.author.avatar_url)
 				await ctx.send(embed=embed, files=[img])
 			except:
 				embed.add_field(
 					name = "\u200b",
 					value = "No image avaliable!"
 				)
+				embed.add_field(
+					name = "\u200b",
+					value = pokeapi[id - 1]["description"]
+				)
+				embed.set_thumbnail(url=ctx.author.avatar_url)
 				await ctx.send(embed=embed)
 			return
 		# if no pokemon
