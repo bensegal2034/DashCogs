@@ -113,9 +113,10 @@ class Pokemon(commands.Cog):
 		embeds = []
 		run = True
 		v = 0
-		for index in range(len(pokemon)):
-			if pokemon[index]["name"]["english"] == caught_pokemon[sel - 1]["name"]:
-				id = pokemon[index]["id"]
+		if len(caught_pokemon) > 0:
+			for index in range(len(pokemon)):
+				if pokemon[index]["name"]["english"] == caught_pokemon[sel - 1]["name"]:
+					id = pokemon[index]["id"]
 		if sel != 0:
 			if sel > len(caught_pokemon) or sel < 0:
 				return await ctx.send("Invalid value!")
