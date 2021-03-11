@@ -4,7 +4,7 @@
 
 # DashCogs
 
-Garbage I've made for Red (discord bot framework/API). https://github.com/Cog-Creators/Red-DiscordBot
+Garbage I've made for Red (a discord bot framework). https://github.com/Cog-Creators/Red-DiscordBot
 
 # Installation
 
