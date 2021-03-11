@@ -1,5 +1,5 @@
 {
-    "author" : "Dot_Dash",
+    "author" : ["dot_dash#6524"],
     "install_msg" : "Thanks for installing SelfMessage! Use `[p]help SelfMessage` to get started.",
     "name" : "SelfMessage",
     "short" : "Send messages from the bot's account",
