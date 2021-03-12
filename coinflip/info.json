@@ -3,5 +3,5 @@
     "install_msg" : "Thanks for installing Coinflip! Use `[p]help Coinflip` to get started.",
     "name" : "Coinflip",
     "short" : "Flip some coins",
-    "description" : "Flip coins with a fancy animation. Can either be one coin or multiple coins.",
+    "description" : "Flip coins with a fancy animation. Can either be one coin or multiple coins."
 }

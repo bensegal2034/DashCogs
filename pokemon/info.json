@@ -3,5 +3,5 @@
     "install_msg" : "Thanks for installing Pokemon! Use `[p]help Pokemon` to get started.",
     "name" : "Pokemon",
     "short" : "Play a text-based game based around the Pokemon series",
-    "description" : "Play a text based game where you catch various Pokemon based on guessing their names.",
+    "description" : "Play a text based game where you catch various Pokemon based on guessing their names."
 }
