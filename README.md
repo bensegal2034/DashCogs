@@ -20,16 +20,28 @@ And load each cog with
 
 `[p]load <cog name>`
 
-## GImage
+## gimage
 
-Search for either one or multiple images on [Google Images](https://images.google.com).
+Search for either one or multiple images on [Google Images](https://images.google.com). **This cog requires setup before use. Read below.**
+
+To be able to use this cog, you need to enable Google Custom Search API, generate API key credentials and set a project. Simple steps on how to do this are provided below.
+
+1) Visit https://console.developers.google.com and create a project.
+
+2) Visit https://console.developers.google.com/apis/library/customsearch.googleapis.com and enable "Custom Search API" for your project.
+
+3) Visit https://console.developers.google.com/apis/credentials and generate API key credentials for your project. This API key is necessary for later, so save it.
+
+4) Visit https://cse.google.com/cse/all. Create a new custom search engine, with the search engine website being simply `google.com`. Go to edit the new search engine, and enable the 'image search' option. Also enable 'search the entire web'. Remove `google.com` under 'sites to search'. Note the text under 'search engine ID' is your Project CX. You will also need this later, so save it alongside the API key.
+
+5) Give the bot the two pieces of data you should now have on hand, your API key and Project CX. Use `[p]gimageset apikey <key>` and `[p]gimageset projectCX <id>` to do this.
 
 * `[p]img <search term>`: Download a single image. Only accepts one parameter, which is the image you would like to search for.
 * `[p]mimg <search term> <amount>`: Download multiple images. Accepts two parameters - the search and the amount of images to get. Please note that large amounts may crash the bot. In addition, search terms with a space must be put in quotes.
 * `[p]gimageset <setting>`: Manipulate various settings described below.
   * `[p]gimageset block <user> <list>`: Block or unblock a person from using GImage. If "list" is added after this command, it will print a list of all people currently blocked from using GImage.
 
-## SelfMessage
+## selfmessage
 
 Type messages using your bot's account. In order to send a message, PM the bot with what you would like to say. Make sure you've set the server and channel the bot should say the messages in first (using the commands listed below)!
 **Note: Only the owner of the bot is allowed to do this. If you would like to allow someone else to access SelfMessage, add them with [p] toggleuser.**
@@ -39,7 +51,7 @@ Type messages using your bot's account. In order to send a message, PM the bot w
   * `[p]selfmessageset enabled`: Toggles on and off whether the bot owner sending a PM to their bot will send a message.
   * `[p]selfmessageset user <user> <list>`: Toggles on and off whether someone can use the cog besides the bot owner. Add "list" to the end of this command to view all users allowed to use SelfMessage.
 
-## Pokemon
+## pokemon
   
 Play a text-based game based around the Pokemon series. Set up a whitelisted channel or two for the bot to post pokemon in, and guess their names! This cog was inspired by Pokecord, the popular Discord bot. As such, the cog offers the ability to import all owned pokemon from Pokecord. The aim is to provide a more customizable experience than Pokecord on a per-server basis.
 
@@ -55,7 +67,7 @@ Play a text-based game based around the Pokemon series. Set up a whitelisted cha
   * `[p]pokmemonset spawntime`: Set the amount of time that it should take for a pokemon to spawn, in seconds. Cannot be less than or equal to 0. Can either be one value or two, if the bot should pick a random time between these two values for every pokemon spawned.
   * `[p]pokmemonset whitelist <list>`: Add the current channel to the whitelist, or list all currently whitelisted channels by adding "list" after this command.
 
-## Coinflip
+## coinflip
 
 Flip coins with a fancy animation. Can either be one coin or multiple coins.
 
