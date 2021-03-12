@@ -36,15 +36,21 @@ To be able to use this cog, you need to enable Google Custom Search API, generat
 
 5) Give the bot the two pieces of data you should now have on hand, your API key and Project CX. Use `[p]gimageset apikey <key>` and `[p]gimageset projectCX <id>` to do this.
 
-* `[p]img <search term>`: Download a single image. Only accepts one parameter, which is the image you would like to search for.
-* `[p]mimg <search term> <amount>`: Download multiple images. Accepts two parameters - the search and the amount of images to get. Please note that large amounts may crash the bot. In addition, search terms with a space must be put in quotes.
+6) That's it! You are now ready to use gimage. 
+
+**Commands**
+* `[p]img <keyword> <amount>`: Display images in chat. Keyword is the search term, amount is the number of images you want to be displayed. 
 * `[p]gimageset <setting>`: Manipulate various settings described below.
   * `[p]gimageset block <user> <list>`: Block or unblock a person from using GImage. If "list" is added after this command, it will print a list of all people currently blocked from using GImage.
+  * `[p]gimageset apikey <key>`: Input your API key. See above for details.
+  * `[p]gimageset projectCX <id>`: Input your Project CX. See above for details.
 
 ## selfmessage
 
 Type messages using your bot's account. In order to send a message, PM the bot with what you would like to say. Make sure you've set the server and channel the bot should say the messages in first (using the commands listed below)!
 **Note: Only the owner of the bot is allowed to do this. If you would like to allow someone else to access SelfMessage, add them with [p] toggleuser.**
+
+**Commands**
 * `[p]selfmessageset <setting>`: Manipulate various settings described below.
   * `[p]selfmessageset server <server>`: Sets the server the bot should look for channels in. The bot must be in the server specified.
   * `[p]selfmessageset channel <channel>`: Sets the channel the bot should send messages in. The channel must be one the bot can see.
@@ -55,6 +61,7 @@ Type messages using your bot's account. In order to send a message, PM the bot w
   
 Play a text-based game based around the Pokemon series. Set up a whitelisted channel or two for the bot to post pokemon in, and guess their names! This cog was inspired by Pokecord, the popular Discord bot. As such, the cog offers the ability to import all owned pokemon from Pokecord. The aim is to provide a more customizable experience than Pokecord on a per-server basis.
 
+**Commands**
 * `[p]pokemonimport`: Import all your pokemon from Pokecord. The command will walk you through the steps to do so. Please note that this can only be done once per person.
 * `[p]pokemoninfo <id>`: Display all your pokemon that you have caught. It is also possible to view a detailed readout of each caught pokemon's statistics by adding their ID after this command.
 * `[p]pokemonselect <id>`: Select a pokemon to recieve EXP. If no pokemon is selected, this defaults to the first pokemon caught.
@@ -71,4 +78,5 @@ Play a text-based game based around the Pokemon series. Set up a whitelisted cha
 
 Flip coins with a fancy animation. Can either be one coin or multiple coins.
 
+**Commands**
 * `[p]coinflip <type>`: Flip either one coin or multiple coins at once.
