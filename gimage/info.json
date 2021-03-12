@@ -1,8 +1,8 @@
 {
     "author" : ["dot_dash#6524"],
-    "install_msg" : "Thanks for installing GImage! Use `[p]help GImage` to get started.",
-    "name" : "GImage",
+    "install_msg" : "Thanks for installing gimage! Use `[p]help gimage` to get started.",
+    "name" : "gimage",
     "short" : "Get images from Google",
-    "description" : "Get images from Google. Can be multiple or singular images.",
-    "requirements": ["google_images_download"]
+    "description" : "Get images from Google, with customizable settings and features.",
+    "requirements": ["google_images_search", "windows-curses"]
 }
