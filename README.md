@@ -4,7 +4,7 @@
 
 # DashCogs
 
-Things I've made for Red (a discord bot framework). https://github.com/Cog-Creators/Red-DiscordBot
+Things I've made for Red. https://github.com/Cog-Creators/Red-DiscordBot
 
 # Installation
 
