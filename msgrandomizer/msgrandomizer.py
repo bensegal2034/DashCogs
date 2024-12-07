@@ -1,4 +1,4 @@
-from redbot.core import commands
+from redbot.core import commands, app_commands
 from redbot.core import Config
 from redbot.core import utils
 import discord, random, itertools, pprint
@@ -29,32 +29,32 @@ class MsgRandomizer(commands.Cog):
 
         return cachedChannels
 
-    @commands.command()
-    async def randomize(self, ctx, channel : discord.TextChannel):
+    @app_commands.command()
+    async def randomize(self, intr: discord.Interaction, channel : discord.TextChannel):
         """
         Display messages from a given channel in random order.
         """
 
-        cachedChannels = await self.config.guild(ctx.guild).cachedChannels()
+        cachedChannels = await self.config.guild(intr.guild).cachedChannels()
 
         # Check if the passed channel is cached, if it is, check if there are new URLs to cache
         if str(channel.id) in cachedChannels:
-            async with ctx.typing():
+            async with intr.channel.typing():
                 async for message in channel.history(after=await channel.fetch_message(list(cachedChannels[str(channel.id)].keys())[-2]), limit=None):
                     cachedChannels = await self.processMessage(message, channel, cachedChannels)
-            await ctx.send("Successfully updated channel cache!")
+            await intr.response.send_message("Successfully updated channel cache!", ephemeral=True)
 
         else:
             # We have not cached this channel yet, go through it from oldest to newest and add all the messages with embeds to the dict of cached channels
-            async with ctx.typing():
+            async with intr.channel.typing():
                 cachedChannels.update({str(channel.id) : {"lastCheckedMsg" : ""}})
 
                 async for message in channel.history(oldest_first=True, limit=None):
                     cachedChannels = await self.processMessage(message, channel, cachedChannels)
-            await ctx.send("Successfully added channel to cached channels list!")
+            await intr.response.send_message("Successfully added channel to cached channels list!", ephemeral=True)
         
         # Update the cache with our new data if it exists (if not, no problem in just setting the dict to its existing value)
-        await self.config.guild(ctx.guild).cachedChannels.set(cachedChannels)
+        await self.config.guild(intr.guild).cachedChannels.set(cachedChannels)
 
         # Form our list of embeds and randomize them
         mediaEmbeds = []
@@ -72,12 +72,11 @@ class MsgRandomizer(commands.Cog):
                     print("Interpreting as video")
                     embed.video.url = data
                 else:
-                    print(f"Unknown type")
-                    embed.url = data
+                    print(f"Unknown type, skipping")
                 mediaEmbeds.append(embed)
 
         # Create a menu of the embeds and display it
-        await utils.menus.menu(ctx, mediaEmbeds)
+        await utils.menus.menu(intr, mediaEmbeds)
 
     @commands.command()
     async def showcached(self, ctx):
