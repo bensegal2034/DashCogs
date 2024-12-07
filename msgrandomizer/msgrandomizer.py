@@ -65,24 +65,16 @@ class MsgRandomizer(commands.Cog):
             for data in messageData:
                 embed = discord.Embed()
                 print(f"Data: {data}")
-                if "jpg" in data or "png" in data:
+                if "jpg" in data or "png" in data or "gif" in data:
                     print("Interpreting as image")
                     embed.set_image(url=data)
-                    embed.description = "Test"
-                    embed.title = "Test"
-                    mediaEmbeds.append(embed)
                 elif "youtube" in data:
                     print("Interpreting as video")
                     embed.video.url = data
-                    embed.description = "Test"
-                    embed.title = "Test"
-                    mediaEmbeds.append(embed)
                 else:
                     print(f"Unknown type")
                     embed.url = data
-                    embed.description = "Test"
-                    embed.title = "Test"
-                    mediaEmbeds.append(embed)
+                mediaEmbeds.append(embed)
 
         # Create a menu of the embeds and display it
         await utils.menus.menu(ctx, mediaEmbeds)
