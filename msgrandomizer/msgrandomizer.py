@@ -76,7 +76,7 @@ class MsgRandomizer(commands.Cog):
                 mediaEmbeds.append(embed)
 
         # Create a menu of the embeds and display it
-        await utils.menus.menu(intr, mediaEmbeds)
+        await utils.menus.menu(intr.context, mediaEmbeds)
 
     @commands.command()
     async def showcached(self, ctx):
