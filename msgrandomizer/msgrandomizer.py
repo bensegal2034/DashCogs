@@ -205,6 +205,7 @@ class MsgRandomizer(commands.GroupCog, group_name="msgrand"):
         await intr.response.send_message(content=cachedChannelsText, ephemeral=True)
 
     @app_commands.command(name="clearcached", description="Clear MsgRandomizer's cache for the current server")
+    @app_commands.checks.has_permissions(administrator=True)
     @app_commands.guild_only()
     async def clearcached(self, intr: discord.Interaction):
         await self.config.guild(intr.guild).clear()
