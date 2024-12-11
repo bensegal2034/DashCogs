@@ -1,0 +1,7 @@
+{
+    "author" : ["dot_dash"],
+    "install_msg" : "Thanks for installing Pokemon! Use `/msgrand` to get started.",
+    "name" : "MsgRandomizer",
+    "short" : "Display messages in a random order from a given channel.",
+    "description" : "Display messages in a random order from a given channel."
+}
