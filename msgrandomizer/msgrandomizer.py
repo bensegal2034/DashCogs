@@ -90,21 +90,23 @@ class MsgRandomizer(commands.GroupCog, group_name="msgrand"):
             "tenor",
             "jpg",
             "png",
-            "webm",
             "gif",
+            "webp",
             "youtube",
-            "mp4"
+            "mp4",
+            "webm"
         ]
         videoUrlTypes = [
             "youtube",
-            "mp4"
+            "mp4",
+            "webm"
         ]
         pictureUrlTypes = [
             "tenor",
             "jpg",
             "png",
-            'webm',
-            "gif"
+            "gif",
+            "webp"
         ]
         mediaStrings = []
 
